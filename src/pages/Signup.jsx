@@ -34,6 +34,17 @@ export default function SignupPage() {
   }
 
   const { enteredData: email, handleUpdateData, setIsBlurred, error: emailError } = useSecureInput((str) => str.includes("@"));
+  const {
+    enteredData: password,
+    handleUpdateData: handleUpdatePassword,
+    setIsBlurred: setPasswordIsBlurred,
+    error: passwordError,
+  } = useSecureInput((str) => str.length >= 6);
+
+  let errors = [];
+  if (isError) errors.push(error?.code || "An error has occured");
+  if (emailError) errors.push("format/email");
+  if (passwordError) errors.push("format/password");
 
   return (
     <CredientialCard styling="p-8 flex flex-col gap-8">
@@ -52,13 +63,25 @@ export default function SignupPage() {
             placeholder="Email"
             required
           />
-          <Input type="password" name="password" placeholder="Password" required />
+          <Input
+            type="password"
+            value={password}
+            onChange={handleUpdatePassword}
+            onBlur={() => setPasswordIsBlurred(true)}
+            name="password"
+            placeholder="Password"
+            required
+          />
         </div>
         <p className="text-center my-8">
-          <SigningButton title={isPending ? "Loading..." : "Sign up"} type="violet" width="w-3/4 lg:w-1/4" />
+          <SigningButton
+            title={isPending ? "Loading..." : "Sign up"}
+            type="violet"
+            width="w-3/4 lg:w-1/4"
+            disabled={isError || emailError || passwordError}
+          />
         </p>
-        {isError && <Error error={error} />}
-        {emailError && <Error error="format/email" />}
+        {errors.length > 0 && <Error errors={errors} />}
       </form>
       <hr className="text-gray-300" />
       <div className="text-center text-lg">

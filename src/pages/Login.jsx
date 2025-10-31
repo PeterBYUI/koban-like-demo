@@ -33,7 +33,7 @@ export default function LoginPage() {
           <Input type="email" name="email" placeholder="Email" required />
           <Input type="password" name="password" placeholder="Password" required />
           <SigningButton title={isPending ? "Loading..." : "Log in"} type="violet" width="w-3/4 lg:w-1/4" />
-          {isError && <Error error={error} />}
+          {isError && <Error errors={[error?.code || "An error has occured."]} />}
         </form>
       </div>
       <div className="bg-violet-700 rounded-b-md lg:rounded-r-md p-8 flex flex-col items-center justify-center gap-4">
