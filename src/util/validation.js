@@ -13,7 +13,7 @@ export function isEmailValid(str) {
   if (firstCharacter === "@" || lastCharacter === "@") return false;
   if (firstCharacter === "." || lastCharacter === ".") return false;
   if (email.includes("..")) return false;
-  if (!local || !domain) return false; //c
+  if (!local || !domain) return false;
   if (!domain.includes(".")) return false;
 
   let atNumber = 0;
