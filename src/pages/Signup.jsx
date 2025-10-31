@@ -4,6 +4,8 @@ import { signUpUser } from "../util/http";
 import { useNavigate } from "react-router";
 import { useContext } from "react";
 import { AuthContext } from "../store/AuthContext";
+import { isEmailValid } from "../util/validation";
+import { isPasswordValid } from "../util/validation";
 import useSecureInput from "../hooks/useInput";
 
 import CredientialCard from "../components/CredientialCard";
@@ -49,20 +51,14 @@ export default function SignupPage() {
     disabled: lnDisabled,
   } = useSecureInput((str) => str.length >= 2);
 
-  const {
-    enteredData: email,
-    handleUpdateData,
-    setIsBlurred,
-    error: emailError,
-    disabled: eDisabled,
-  } = useSecureInput((str) => str.includes("@"));
+  const { enteredData: email, handleUpdateData, setIsBlurred, error: emailError, disabled: eDisabled } = useSecureInput(isEmailValid);
   const {
     enteredData: password,
     handleUpdateData: handleUpdatePassword,
     setIsBlurred: setPasswordIsBlurred,
     error: passwordError,
     disabled: pDisabled,
-  } = useSecureInput((str) => str.length >= 6);
+  } = useSecureInput(isPasswordValid);
 
   let errors = [];
   if (isError) errors.push(error?.code || "An error has occured");

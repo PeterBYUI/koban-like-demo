@@ -4,7 +4,7 @@ export default function Error({ errors }) {
     "auth/email-already-in-use": "This email is already in use.",
     "format/name": "Your first and last names must be at least 2 characters long.",
     "format/email": "Please enter a valid email.",
-    "format/password": "Your password must be at least 6 characters long.",
+    "format/password": "Your password must be at least 6 characters long and contain at least 1 digit.",
   };
 
   return (
