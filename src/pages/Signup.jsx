@@ -33,27 +33,66 @@ export default function SignupPage() {
     mutate({ firstName, lastName, email, password });
   }
 
-  const { enteredData: email, handleUpdateData, setIsBlurred, error: emailError } = useSecureInput((str) => str.includes("@"));
+  const {
+    enteredData: firstName,
+    handleUpdateData: handleUpdateFirstName,
+    setIsBlurred: setFirstNameIsBlurred,
+    error: firstNameError,
+    disabled: fnDisabled,
+  } = useSecureInput((str) => str.length >= 2);
+
+  const {
+    enteredData: lastName,
+    handleUpdateData: handleUpdateLastName,
+    setIsBlurred: setLastNameIsBlurred,
+    error: lastNameError,
+    disabled: lnDisabled,
+  } = useSecureInput((str) => str.length >= 2);
+
+  const {
+    enteredData: email,
+    handleUpdateData,
+    setIsBlurred,
+    error: emailError,
+    disabled: eDisabled,
+  } = useSecureInput((str) => str.includes("@"));
   const {
     enteredData: password,
     handleUpdateData: handleUpdatePassword,
     setIsBlurred: setPasswordIsBlurred,
     error: passwordError,
+    disabled: pDisabled,
   } = useSecureInput((str) => str.length >= 6);
 
   let errors = [];
   if (isError) errors.push(error?.code || "An error has occured");
   if (emailError) errors.push("format/email");
   if (passwordError) errors.push("format/password");
+  if (firstNameError || lastNameError) errors.push("format/name");
 
   return (
     <CredientialCard styling="p-8 flex flex-col gap-8">
       <h3 className="text-2xl font-semibold mb-4 text-violet-700 text-center">Tell us a little about yourself</h3>
       <form onSubmit={signUpOnSubmit}>
         <div className="grid grid-cols-1 lg:grid-cols-2 justify-items-center gap-8">
-          <Input type="text" name="first-name" placeholder="First name" required />
-          <Input type="text" name="last-name" placeholder="Last name" required />
-          {/* <Input type="email" name="email" placeholder="Email" required /> */}
+          <Input
+            type="text"
+            value={firstName}
+            onChange={handleUpdateFirstName}
+            onBlur={setFirstNameIsBlurred}
+            name="first-name"
+            placeholder="First name"
+            required
+          />
+          <Input
+            type="text"
+            value={lastName}
+            onChange={handleUpdateLastName}
+            onBlur={setLastNameIsBlurred}
+            name="last-name"
+            placeholder="Last name"
+            required
+          />
           <Input
             type="email"
             name="email"
@@ -78,7 +117,7 @@ export default function SignupPage() {
             title={isPending ? "Loading..." : "Sign up"}
             type="violet"
             width="w-3/4 lg:w-1/4"
-            disabled={isError || emailError || passwordError}
+            disabled={eDisabled || pDisabled || fnDisabled || lnDisabled}
           />
         </p>
         {errors.length > 0 && <Error errors={errors} />}

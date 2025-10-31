@@ -2,6 +2,7 @@ export default function Error({ errors }) {
   const errorMessage = {
     "auth/invalid-credential": "Please check your email and your password.",
     "auth/email-already-in-use": "This email is already in use.",
+    "format/name": "Your first and last names must be at least 2 characters long.",
     "format/email": "Please enter a valid email.",
     "format/password": "Your password must be at least 6 characters long.",
   };
@@ -23,8 +24,8 @@ export default function Error({ errors }) {
         />
       </svg>
 
-      <div className="text-center">
-        {errors.some((error) => error?.code) && <p>Something went wrong.</p>}
+      <div className="text-center flex flex-col gap-4 lg:gap-2">
+        {/* {errors.some((error) => error?.code) && <p>Something went wrong.</p>} */}
         {errors.map((error) => {
           //if the error isn't null – which could happen when a Firebase error is passed as a prop
           if (error) {

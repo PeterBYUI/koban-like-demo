@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
-import { signInUser, queryClient } from "../util/http";
+import { signInUser } from "../util/http";
+import useSecureInput from "../hooks/useInput";
 
 import SigningButton from "../components/SigningButton";
 import Error from "../components/Error";
@@ -17,6 +18,27 @@ export default function LoginPage() {
     },
   });
 
+  const {
+    enteredData: email,
+    handleUpdateData: handleUpdateEmail,
+    setIsBlurred: setEmailIsBlurred,
+    error: emailError,
+    disabled: eDisabled,
+  } = useSecureInput((str) => str.includes("@")); //create a function in a utility file with all the checks
+
+  const {
+    enteredData: password,
+    handleUpdateData: handleUpdatePassword,
+    setIsBlurred: setPasswordIsBlurred,
+    error: passwordError,
+    disabled: pDisabled,
+  } = useSecureInput((str) => str.length >= 6);
+
+  let errors = [];
+  if (isError) errors.push(error?.code || "An error occured.");
+  if (emailError) errors.push("format/email");
+  if (passwordError) errors.push("format/password");
+
   const signInOnSubmit = (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
@@ -30,10 +52,31 @@ export default function LoginPage() {
       <div className="flex flex-col items-center gap-4 p-8">
         <h3 className="text-2xl font-semibold mb-4 text-violet-700 text-center">Login To Your Account</h3>
         <form onSubmit={signInOnSubmit} className="w-1/1 flex flex-col items-center gap-4">
-          <Input type="email" name="email" placeholder="Email" required />
-          <Input type="password" name="password" placeholder="Password" required />
-          <SigningButton title={isPending ? "Loading..." : "Log in"} type="violet" width="w-3/4 lg:w-1/4" />
-          {isError && <Error errors={[error?.code || "An error has occured."]} />}
+          <Input
+            type="email"
+            value={email}
+            onChange={handleUpdateEmail}
+            onBlur={setEmailIsBlurred}
+            name="email"
+            placeholder="Email"
+            required
+          />
+          <Input
+            type="password"
+            value={password}
+            onChange={handleUpdatePassword}
+            onBlur={setPasswordIsBlurred}
+            name="password"
+            placeholder="Password"
+            required
+          />
+          <SigningButton
+            title={isPending ? "Loading..." : "Log in"}
+            type="violet"
+            width="w-3/4 lg:w-1/4"
+            disabled={eDisabled || pDisabled}
+          />
+          {errors.length > 0 && <Error errors={errors} />}
         </form>
       </div>
       <div className="bg-violet-700 rounded-b-md lg:rounded-r-md p-8 flex flex-col items-center justify-center gap-4">

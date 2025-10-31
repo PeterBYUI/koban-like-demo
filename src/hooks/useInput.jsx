@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function useSecureInput(checkingFunction, errorCode) {
+export default function useSecureInput(checkingFunction) {
   const [enteredData, setEnteredData] = useState("");
   const [isBlurred, setIsBlurred] = useState(false);
 
@@ -13,5 +13,6 @@ export default function useSecureInput(checkingFunction, errorCode) {
     handleUpdateData,
     setIsBlurred,
     error: !checkingFunction(enteredData) && isBlurred,
+    disabled: !checkingFunction(enteredData),
   };
 }
