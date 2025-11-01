@@ -5,6 +5,7 @@ export default function Error({ errors }) {
     "format/name": "Your first and last names must be at least 2 characters long.",
     "format/email": "Please enter a valid email.",
     "format/password": "Your password must be at least 6 characters long and contain at least 1 digit.",
+    "format/confirm-password": "The passwords do not match.",
   };
 
   return (

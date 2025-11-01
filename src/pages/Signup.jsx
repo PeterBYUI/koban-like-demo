@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { AuthContext } from "../store/AuthContext";
 import { isEmailValid } from "../util/validation";
 import { isPasswordValid } from "../util/validation";
+import { useRef } from "react";
 import useSecureInput from "../hooks/useInput";
 
 import CredientialCard from "../components/CredientialCard";
@@ -55,16 +56,30 @@ export default function SignupPage() {
   const {
     enteredData: password,
     handleUpdateData: handleUpdatePassword,
+    isBlurred: passwordIsBlurred,
     setIsBlurred: setPasswordIsBlurred,
     error: passwordError,
     disabled: pDisabled,
   } = useSecureInput(isPasswordValid);
 
+  const {
+    enteredData: confirmedPassword,
+    handleUpdateData: handleUpdateConfirmedPassword,
+    isBlurred: confirmedPasswordIsBlurred,
+    setIsBlurred: setConfirmedPasswordIsBlurred,
+    error: confirmedPasswordError,
+    disabled: cpDisabled,
+  } = useSecureInput(isPasswordValid);
+
+  const companyNameRef = useRef(); //no specific validation for the company name
+  //might be deleted later (the company's name can be retrieved using FormData)
+
   let errors = [];
   if (isError) errors.push(error?.code || "An error has occured");
   if (emailError) errors.push("format/email");
-  if (passwordError) errors.push("format/password");
+  if (passwordError || confirmedPasswordError) errors.push("format/password");
   if (firstNameError || lastNameError) errors.push("format/name");
+  if (confirmedPassword !== password && passwordIsBlurred && confirmedPasswordIsBlurred) errors.push("format/confirm-password");
 
   return (
     <CredientialCard styling="p-8 flex flex-col gap-8">
@@ -98,6 +113,7 @@ export default function SignupPage() {
             placeholder="Email"
             required
           />
+          <Input ref={companyNameRef} type="text" name="company-name" placeholder="Company name (optional)" />
           <Input
             type="password"
             value={password}
@@ -107,13 +123,23 @@ export default function SignupPage() {
             placeholder="Password"
             required
           />
+
+          <Input
+            type="password"
+            value={confirmedPassword}
+            onChange={handleUpdateConfirmedPassword}
+            onBlur={() => setConfirmedPasswordIsBlurred(true)}
+            name="password"
+            placeholder="Confirm password"
+            required
+          />
         </div>
         <p className="text-center my-8">
           <SigningButton
             title={isPending ? "Loading..." : "Sign up"}
             type="violet"
             width="w-3/4 lg:w-1/4"
-            disabled={eDisabled || pDisabled || fnDisabled || lnDisabled}
+            disabled={eDisabled || pDisabled || fnDisabled || lnDisabled || cpDisabled || password !== confirmedPassword}
           />
         </p>
         {errors.length > 0 && <Error errors={errors} />}

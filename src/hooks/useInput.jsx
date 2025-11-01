@@ -12,6 +12,7 @@ export default function useSecureInput(checkingFunction) {
     enteredData,
     handleUpdateData,
     setIsBlurred,
+    isBlurred,
     error: !checkingFunction(enteredData) && isBlurred,
     disabled: !checkingFunction(enteredData),
   };

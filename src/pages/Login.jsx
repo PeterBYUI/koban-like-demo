@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { signInUser } from "../util/http";
+import { isEmailValid } from "../util/validation";
+import { isPasswordValid } from "../util/validation";
 import useSecureInput from "../hooks/useInput";
 
 import SigningButton from "../components/SigningButton";
@@ -24,7 +26,7 @@ export default function LoginPage() {
     setIsBlurred: setEmailIsBlurred,
     error: emailError,
     disabled: eDisabled,
-  } = useSecureInput((str) => str.includes("@")); //create a function in a utility file with all the checks
+  } = useSecureInput(isEmailValid);
 
   const {
     enteredData: password,
@@ -32,7 +34,7 @@ export default function LoginPage() {
     setIsBlurred: setPasswordIsBlurred,
     error: passwordError,
     disabled: pDisabled,
-  } = useSecureInput((str) => str.length >= 6);
+  } = useSecureInput(isPasswordValid);
 
   let errors = [];
   if (isError) errors.push(error?.code || "An error occured.");
@@ -74,7 +76,7 @@ export default function LoginPage() {
             title={isPending ? "Loading..." : "Log in"}
             type="violet"
             width="w-3/4 lg:w-1/4"
-            disabled={eDisabled || pDisabled}
+            disabled={eDisabled || pDisabled || isPending}
           />
           {errors.length > 0 && <Error errors={errors} />}
         </form>
