@@ -17,13 +17,20 @@ export const signOutUser = async () => {
   await signOut(auth);
 };
 
-export const signUpUser = async ({ firstName, lastName, email, password }) => {
+export const signUpUser = async ({ firstName, lastName, email, password, companyName }) => {
   const res = await createUserWithEmailAndPassword(auth, email, password);
   await updateProfile(res.user, {
     displayName: `${firstName} ${lastName}`,
   });
   await res.user.reload();
-  await addDoc(collectionRef, { displayName: `${firstName} ${lastName}`, email, id: res.user.uid });
+  await addDoc(collectionRef, {
+    firstName,
+    lastName,
+    displayName: `${firstName} ${lastName}`,
+    email,
+    id: res.user.uid,
+    companyName: companyName,
+  });
   return res.user; //so that the user can be set manually with the updated displayName property, since updateProfile() doesn't
   //trigger onAuthStateChanged()
 };

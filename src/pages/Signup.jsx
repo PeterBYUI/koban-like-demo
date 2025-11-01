@@ -26,16 +26,6 @@ export default function SignupPage() {
     },
   });
 
-  function signUpOnSubmit(e) {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    const firstName = fd.get("first-name");
-    const lastName = fd.get("last-name");
-    const email = fd.get("email"); //use custom hook instead
-    const password = fd.get("password"); //use custom hook instead
-    mutate({ firstName, lastName, email, password });
-  }
-
   const {
     enteredData: firstName,
     handleUpdateData: handleUpdateFirstName,
@@ -71,15 +61,23 @@ export default function SignupPage() {
     disabled: cpDisabled,
   } = useSecureInput(isPasswordValid);
 
-  const companyNameRef = useRef(); //no specific validation for the company name
-  //might be deleted later (the company's name can be retrieved using FormData)
-
   let errors = [];
   if (isError) errors.push(error?.code || "An error has occured");
   if (emailError) errors.push("format/email");
   if (passwordError || confirmedPasswordError) errors.push("format/password");
   if (firstNameError || lastNameError) errors.push("format/name");
   if (confirmedPassword !== password && passwordIsBlurred && confirmedPasswordIsBlurred) errors.push("format/confirm-password");
+
+  function signUpOnSubmit(e) {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const firstName = fd.get("first-name");
+    const lastName = fd.get("last-name");
+    const email = fd.get("email");
+    const password = fd.get("password");
+    const companyName = fd.get("company-name");
+    mutate({ firstName, lastName, email, password, companyName });
+  }
 
   return (
     <CredientialCard styling="p-8 flex flex-col gap-8">
@@ -113,7 +111,7 @@ export default function SignupPage() {
             placeholder="Email"
             required
           />
-          <Input ref={companyNameRef} type="text" name="company-name" placeholder="Company name (optional)" />
+          <Input type="text" name="company-name" placeholder="Company name (optional)" />
           <Input
             type="password"
             value={password}
