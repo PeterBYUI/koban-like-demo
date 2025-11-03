@@ -2,7 +2,6 @@ import { createContext, useState } from "react";
 import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/config";
-import { displayNameFormat } from "../util/utility";
 
 export const AuthContext = createContext({
   user: {
@@ -14,7 +13,7 @@ export const AuthContext = createContext({
 });
 
 export default function AuthContextProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(undefined);
   //add loading state to stop the rendering of certains pages before the authentication is completed
 
   useEffect(() => {

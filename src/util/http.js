@@ -1,11 +1,12 @@
 import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebase/config";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDoc, query, where } from "firebase/firestore";
 import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient();
 
-const collectionRef = collection(db, "users");
+const usersRef = collection(db, "users");
+const boardsRef = collection(db, "boards");
 
 //check if the code below is able to handle errors
 
@@ -23,7 +24,7 @@ export const signUpUser = async ({ firstName, lastName, email, password, company
     displayName: `${firstName} ${lastName}`,
   });
   await res.user.reload();
-  await addDoc(collectionRef, {
+  await addDoc(usersRef, {
     firstName,
     lastName,
     displayName: `${firstName} ${lastName}`,
@@ -33,4 +34,24 @@ export const signUpUser = async ({ firstName, lastName, email, password, company
   });
   return res.user; //so that the user can be set manually with the updated displayName property, since updateProfile() doesn't
   //trigger onAuthStateChanged()
+};
+
+export const addBoard = async (board, userId) => {
+  await addDoc(boardsRef, {
+    userId: userId,
+    boardName: board.name,
+    lists: [],
+  });
+};
+
+export const getBoards = async ({ userId }) => {
+  console.log("Fetching boards...");
+  console.log(`UserId: ${userId}`);
+  const queryRef = query(boardsRef, where("userId", "==", userId));
+  const snapshot = await getDoc(queryRef);
+  const boards = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+  return boards;
 };

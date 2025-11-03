@@ -11,34 +11,38 @@ import LoginPage from "./pages/Login";
 import Boards from "./pages/Boards";
 import SignupPage from "./pages/Signup";
 
+import ProtectedRoute from "./components/ProtectedRoute";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootPage />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/login" replace />,
+      },
+      {
+        path: "/login",
+        element: <LoginPage />,
+      },
+      {
+        path: "/signup",
+        element: <SignupPage />,
+      },
+      {
+        path: "/boards",
+        element: (
+          <ProtectedRoute>
+            <Boards />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+]);
+
 function App() {
-  const { user } = useContext(AuthContext);
-
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <RootPage />,
-      children: [
-        {
-          index: true,
-          element: <Navigate to="/login" replace />,
-        },
-        {
-          path: "/login",
-          element: <LoginPage />,
-        },
-        {
-          path: "/signup",
-          element: <SignupPage />,
-        },
-        {
-          path: "/boards",
-          element: user ? <Boards /> : <Navigate to="/login" replace />,
-        },
-      ],
-    },
-  ]);
-
   return (
     <>
       <RouterProvider router={router} />
