@@ -3,6 +3,7 @@ import { getBoards, addBoard } from "../util/http";
 import { AuthContext } from "../store/AuthContext";
 import { useContext } from "react";
 import { useEffect } from "react";
+import { useCallback } from "react";
 
 import CardGrid from "../components/CardGrid";
 import Card from "../components/Card";
@@ -23,15 +24,13 @@ const cards = [
 ];
 
 export default function Boards() {
-  console.log("Boards component mounted");
-
   useEffect(() => {
     console.log("Boards mounted");
     return () => console.log("Boards unmounted");
   }, []);
 
   const { user } = useContext(AuthContext);
-  const userId = user.id;
+  console.log(`userId: ${user?.id || "no user id"}`);
 
   const {
     data: boards,
@@ -39,14 +38,18 @@ export default function Boards() {
     isError,
     error,
   } = useQuery({
-    queryKey: ["boards", userId],
-    queryFn: ({ signal }) => getBoards({ userId }),
+    queryKey: ["boards", user?.id],
+    queryFn: ({ signal }) => {
+      console.log("fetching boards...");
+      return getBoards(user.id);
+    },
+    enabled: !!user?.id,
   });
 
   return (
     <>
       <h2>{boards ? boards[0].title : "No boards"}</h2>
-      {cards.length > 0 ? (
+      {/* {cards.length > 0 ? (
         <CardGrid>
           {cards.map((card) => (
             <Card key={card.title} card={card} />
@@ -54,7 +57,7 @@ export default function Boards() {
         </CardGrid>
       ) : (
         <p className="">Add a new board</p>
-      )}
+      )} */}
     </>
   );
 }

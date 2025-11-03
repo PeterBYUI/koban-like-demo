@@ -17,6 +17,7 @@ export default function AuthContextProvider({ children }) {
   //add loading state to stop the rendering of certains pages before the authentication is completed
 
   useEffect(() => {
+    console.log("Checking for user...");
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         let displayName = "";

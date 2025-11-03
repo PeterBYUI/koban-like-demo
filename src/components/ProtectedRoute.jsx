@@ -6,8 +6,13 @@ export default function ProtectedRoute({ children }) {
   const { user } = useContext(AuthContext);
 
   if (user === undefined) {
+    console.log("Fetching the user...");
     return <p>Fetching the user...</p>;
   }
+  if (user === null) {
+    console.log("No user is logged in");
+    return <Navigate to="/login" />;
+  }
 
-  return user ? children : <Navigate to="/login" />;
+  return children;
 }

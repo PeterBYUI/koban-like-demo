@@ -1,6 +1,6 @@
 import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebase/config";
-import { collection, addDoc, getDoc, query, where } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient();
@@ -45,10 +45,11 @@ export const addBoard = async (board, userId) => {
 };
 
 export const getBoards = async ({ userId }) => {
+  if (!userId) return [];
   console.log("Fetching boards...");
   console.log(`UserId: ${userId}`);
   const queryRef = query(boardsRef, where("userId", "==", userId));
-  const snapshot = await getDoc(queryRef);
+  const snapshot = await getDocs(queryRef);
   const boards = snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),

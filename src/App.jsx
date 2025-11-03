@@ -2,8 +2,6 @@
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router";
 import { Navigate } from "react-router";
-import { useContext } from "react";
-import { AuthContext } from "./store/AuthContext";
 
 //pages
 import RootPage from "./pages/Root";
