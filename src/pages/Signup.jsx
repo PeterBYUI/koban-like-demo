@@ -21,7 +21,7 @@ export default function SignupPage() {
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: signUpUser,
     onSuccess: (user) => {
-      handleSetUser(user.uid, user.email, user.displayName); //for the profile picture (next step: optimistic updating)
+      handleSetUser(user.uid, user.email, user.displayName); //so the user doesn't have to refresh the page to see it in ProfileIcon
       navigate("/boards");
     },
   });

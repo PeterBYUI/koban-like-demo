@@ -28,7 +28,7 @@ export default function AuthContextProvider({ children }) {
           displayName: displayName,
         });
       } else {
-        setUser(null);
+        setUser(null); //no user detected
       }
     });
     return () => {

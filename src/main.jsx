@@ -6,13 +6,16 @@ import App from "./App.jsx";
 import AuthContextProvider from "./store/AuthContext.jsx";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./util/http.js";
+import BoardsContextProvider from "./store/BoardContext.jsx";
 
 createRoot(document.getElementById("root")).render(
-  // <StrictMode>
-  <QueryClientProvider client={queryClient}>
-    <AuthContextProvider>
-      <App />
-    </AuthContextProvider>
-  </QueryClientProvider>
-  // </StrictMode>
+  <StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <AuthContextProvider>
+        <BoardsContextProvider>
+          <App />
+        </BoardsContextProvider>
+      </AuthContextProvider>
+    </QueryClientProvider>
+  </StrictMode>
 );

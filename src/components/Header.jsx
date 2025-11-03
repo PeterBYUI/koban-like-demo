@@ -1,11 +1,65 @@
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../store/AuthContext";
+import { BoardsContext } from "../store/BoardContext";
+import { useQuery } from "@tanstack/react-query";
+import { getBoards } from "../util/http";
+import { capitalize } from "../util/utility";
+
 import ProfileIcon from "./ProfileIcon";
 
 export default function Header({ setSideBarIsOpen, mutate, isPending }) {
+  const { user } = useContext(AuthContext);
+  const { selectedBoard, handleBoardSelection } = useContext(BoardsContext);
+
+  const {
+    data: boards,
+    isPending: isBoardsPending,
+    isSuccess,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["boards", user?.id],
+    queryFn: ({ signal }) => {
+      console.log("HEADER: getBoards");
+      return getBoards({ userId: user.id });
+    },
+    enabled: !!user?.id,
+  });
+
+  useEffect(() => {
+    //onSuccess is deprecated in Tanstack v5
+    if (isSuccess) {
+      console.log("Successfully retrieved the boards: ", boards);
+      handleBoardSelection(boards?.[0]?.title); //will be undefined if there are no boards on the server
+    }
+  }, [isSuccess, boards]);
+
+  const [selectValue, setSelectValue] = useState(boards?.[0]?.title || ""); //a ref could be used instead
+
   return (
     <header className="h-16 bg-[linear-gradient(to_bottom_right,rgba(20,36,82,.70),rgba(20,36,82,.05))] flex items-center text-[#fff]">
       <nav className="w-1/1 px-8 flex justify-between items-center">
         <div className="flex items-center gap-8">
-          <p className="text-xl font-semibold">Example Board</p>
+          <p className="text-xl font-semibold">
+            {boards?.[0]?.title !== undefined ? (
+              <select
+                name="board"
+                id="board"
+                value={selectValue}
+                onChange={(e) => {
+                  handleBoardSelection(e.target.value);
+                }}
+              >
+                {boards.map((board) => (
+                  <option key={board.title} value={board.title}>
+                    {capitalize(board.title)}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              "No boards (yet)."
+            )}
+          </p>
           <button className="cursor-pointer">
             <svg
               xmlns="http://www.w3.org/2000/svg"

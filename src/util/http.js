@@ -36,12 +36,19 @@ export const signUpUser = async ({ firstName, lastName, email, password, company
   //trigger onAuthStateChanged()
 };
 
-export const addBoard = async (board, userId) => {
-  await addDoc(boardsRef, {
-    userId: userId,
-    boardName: board.name,
+export const addBoard = async ({ title, userId }) => {
+  const docRef = await addDoc(boardsRef, {
+    userId,
+    title,
     lists: [],
   });
+
+  return {
+    id: docRef.id,
+    userId,
+    title,
+    lists: [],
+  };
 };
 
 export const getBoards = async ({ userId }) => {
