@@ -4,7 +4,6 @@ export const BoardsContext = createContext({
   selectedBoard: {
     id: "",
     title: "",
-    lists: [],
   },
   handleBoardSelection: () => {},
 });
@@ -17,7 +16,6 @@ export default function BoardsContextProvider({ children }) {
     setSelectedBoard((previousValue) => ({
       id: selectedBoard.id,
       title: selectedBoard.title,
-      lists: selectedBoard,
     }));
   }
 

@@ -7,6 +7,7 @@ export const queryClient = new QueryClient();
 
 const usersRef = collection(db, "users");
 const boardsRef = collection(db, "boards");
+const listsRef = collection(db, "lists");
 
 //check if the code below is able to handle errors
 
@@ -64,6 +65,15 @@ export const getBoards = async ({ userId }) => {
   return boards;
 };
 
-export const getLists = async ({ userId, selectedBoard }) => {};
+export const getLists = async ({ userId, selectedBoardId }) => {
+  if (!userId || !selectedBoardId) return [];
+  // const queryRef = query(listsRef, where("userId", "==", userId), where("boardId", "==", selectedBoardId));
+  const snapshot = await getDocs(listsRef);
+  const lists = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+  return lists;
+};
 
 export const addList = async ({ userId, boardId }) => {};
