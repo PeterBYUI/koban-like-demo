@@ -49,13 +49,22 @@ export default function Modal({ ref }) {
       ref={internalRef}
       className="bg-[#e6e6fa] mt-16 w-2/3 lg:w-1/3 mx-auto p-8 rounded-md backdrop:bg-slate-950 backdrop:opacity-25"
     >
-      <h3 className="text-center text-2xl font-semibold text-violet-700 mb-8">Add a new modal</h3>
+      <h3 className="text-center text-2xl font-semibold text-violet-700 mb-8">Add a new board</h3>
       <form onSubmit={handleSubmitBoardName}>
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-6">
           <Input name="board-name" />
-          <button className="bg-violet-700 hover:bg-violet-900 cursor-pointer px-4 py-1 rounded-md text-[#fff] transition-all duration-200">
-            Add
-          </button>
+          <div className="flex gap-8">
+            <button
+              type="button"
+              onClick={() => internalRef.current.close()}
+              className="text-red-600 hover:text-red-700 cursor-pointer transition-all duration-200"
+            >
+              Cancel
+            </button>
+            <button className="bg-violet-700 hover:bg-violet-900 cursor-pointer px-4 py-1 rounded-md text-[#fff] transition-all duration-200">
+              Add
+            </button>
+          </div>
         </div>
       </form>
     </dialog>

@@ -3,7 +3,7 @@ import SignOutButton from "./SignOutButton";
 
 export default function Sidebar({ open, mutate, isPending }) {
   let styling =
-    "absolute flex pt-16 items-center flex-col gap-16 right-0 w-1/1 h-[90vh] rounded-bl-md ml-auto bg-[linear-gradient(to_bottom_right,rgba(20,36,82,.9),rgba(20,36,82,.5))] transition-all duration-350 ease-in-out ";
+    "absolute flex pt-16 items-center flex-col gap-16 right-0 w-1/1 h-[calc(100vh-64px)] rounded-bl-md ml-auto bg-[linear-gradient(to_bottom_right,rgba(20,36,82,.9),rgba(20,36,82,.5))] transition-all duration-350 ease-in-out ";
   if (open) {
     styling += "translate-x-[0%]";
   } else {

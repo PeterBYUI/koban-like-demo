@@ -63,3 +63,7 @@ export const getBoards = async ({ userId }) => {
   }));
   return boards;
 };
+
+export const getLists = async ({ userId, selectedBoard }) => {};
+
+export const addList = async ({ userId, boardId }) => {};
