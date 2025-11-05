@@ -8,6 +8,7 @@ export const queryClient = new QueryClient();
 const usersRef = collection(db, "users");
 const boardsRef = collection(db, "boards");
 const listsRef = collection(db, "lists");
+const tasksRef = collection(db, "tasks");
 
 //check if the code below is able to handle errors
 
@@ -54,8 +55,8 @@ export const addBoard = async ({ title, userId }) => {
 
 export const getBoards = async ({ userId }) => {
   if (!userId) return [];
-  console.log("Fetching boards...");
-  console.log(`UserId: ${userId}`);
+  // console.log("Fetching boards...");
+  // console.log(`UserId: ${userId}`);
   const queryRef = query(boardsRef, where("userId", "==", userId));
   const snapshot = await getDocs(queryRef);
   const boards = snapshot.docs.map((doc) => ({
@@ -66,14 +67,41 @@ export const getBoards = async ({ userId }) => {
 };
 
 export const getLists = async ({ userId, selectedBoardId }) => {
-  if (!userId || !selectedBoardId) return [];
-  // const queryRef = query(listsRef, where("userId", "==", userId), where("boardId", "==", selectedBoardId));
-  const snapshot = await getDocs(listsRef);
+  if (!userId || !selectedBoardId) {
+    console.log(`userId: ${userId}, selectedBoardId: ${selectedBoardId}`);
+    return [];
+  }
+  const queryRef = query(listsRef, where("userId", "==", userId), where("boardId", "==", selectedBoardId));
+  const snapshot = await getDocs(queryRef);
   const lists = snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
+  console.log(lists);
   return lists;
 };
 
 export const addList = async ({ userId, boardId }) => {};
+
+export const addTask = async ({ title, userId, boardId, listId }) => {
+  if (!title || !userId || !boardId || !listId) return [];
+
+  await addDoc(tasksRef, {
+    title,
+    userId,
+    boardId,
+    listId,
+  });
+};
+
+export const getTasks = async ({ userId, boardId, listId }) => {
+  const queryRef = query(tasksRef, where("userId", "==", userId), where("boardId", "==", selectedBoardId), where("listId", "==", listId));
+
+  const snapshot = await getDocs(queryRef);
+  const tasks = snapshot.docs.map((task) => ({
+    id: task.id,
+    ...task.data(),
+  }));
+  console.log(`TASKS: ${tasks}`);
+  return tasks;
+};

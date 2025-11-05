@@ -13,7 +13,7 @@ import AddButton from "../components/AddButton";
 
 export default function Boards() {
   const { user } = useContext(AuthContext);
-  console.log(`userId: ${user?.id || "no user id"}`);
+  // console.log(`userId: ${user?.id || "no user id"}`);
 
   const { selectedBoard } = useContext(BoardsContext);
 
@@ -24,16 +24,14 @@ export default function Boards() {
     isPending,
     isError,
     error,
-    isSuccess,
   } = useQuery({
     queryKey: ["lists", user?.id, selectedBoard?.id],
-    queryFn: ({ signal }) => getLists({ userId: user?.id, selectedBoard: selectedBoard?.id }),
+    queryFn: ({ queryKey, signal }) => {
+      const [_key, userId, boardId] = queryKey;
+      return getLists({ userId, selectedBoardId: boardId });
+    },
     enabled: !!selectedBoard?.id && !!user?.id,
   });
-
-  useEffect(() => {
-    if (isSuccess && lists) console.log(`Lists: ${lists}`);
-  }, [isSuccess, lists]);
 
   return (
     <>
@@ -41,13 +39,14 @@ export default function Boards() {
         <div className="p-8">
           <div className="min-h-[calc(90vh-32px)] w-1/1 p-8 bg-[rgba(250,250,250,.1)] rounded-md">
             {/*add spinner for isPending */}
-            {lists ? <Lists title={selectedBoard.title} lists={lists} /> : <p>Loading...</p>}
+            {lists && <Lists title={selectedBoard?.title} lists={lists} />}
+            {isPending && <p>Fetching the lists...</p>}
           </div>
         </div>
       ) : (
         <AddButton name="board" onClick={() => ref.current.open()} />
       )}
-      <Modal ref={ref} />
+      <Modal ref={ref} type="board" />
     </>
   );
 }

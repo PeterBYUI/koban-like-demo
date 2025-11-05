@@ -20,9 +20,10 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
     error,
   } = useQuery({
     queryKey: ["boards", user?.id],
-    queryFn: ({ signal }) => {
-      console.log("HEADER: getBoards");
-      return getBoards({ userId: user.id });
+    queryFn: ({ queryKey, signal }) => {
+      const [_key, userId] = queryKey;
+
+      return getBoards({ userId });
     },
     enabled: !!user?.id,
   });
@@ -41,7 +42,7 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
 
   return (
     <>
-      <Modal ref={ref} />
+      <Modal ref={ref} type="board" />
       <header className="h-16 bg-[linear-gradient(to_bottom_right,rgba(20,36,82,.70),rgba(20,36,82,.05))] flex items-center text-[#fff]">
         <nav className="w-1/1 px-8 flex justify-between items-center">
           <div className="flex items-center gap-8">

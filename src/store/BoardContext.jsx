@@ -12,7 +12,7 @@ export default function BoardsContextProvider({ children }) {
   const [selectedBoard, setSelectedBoard] = useState(undefined);
 
   function handleBoardSelection(selectedBoard) {
-    console.log("selectedBoard is now ", selectedBoard.title);
+    console.log("selectedBoard is now ", selectedBoard.title, " selectedBoardId: ", selectedBoard.id);
     setSelectedBoard((previousValue) => ({
       id: selectedBoard.id,
       title: selectedBoard.title,
