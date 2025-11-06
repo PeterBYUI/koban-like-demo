@@ -28,7 +28,9 @@ export default function Boards() {
     queryKey: ["lists", user?.id, selectedBoard?.id],
     queryFn: ({ queryKey, signal }) => {
       const [_key, userId, boardId] = queryKey;
-      return getLists({ userId, selectedBoardId: boardId });
+      if (selectedBoard) {
+        return getLists({ userId, selectedBoardId: boardId });
+      }
     },
     enabled: !!selectedBoard?.id && !!user?.id,
   });
@@ -41,6 +43,7 @@ export default function Boards() {
             {/*add spinner for isPending */}
             {lists && <Lists title={selectedBoard?.title} lists={lists} />}
             {isPending && <p>Fetching the lists...</p>}
+            {!isPending && !lists && <AddButton name="list" onClick={() => ref.current.open()} />}
           </div>
         </div>
       ) : (

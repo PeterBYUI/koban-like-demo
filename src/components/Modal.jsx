@@ -1,6 +1,6 @@
-import { useImperativeHandle, useRef, useContext, useEffect } from "react";
+import { useImperativeHandle, useRef, useContext } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { addBoard, addTask } from "../util/http";
+import { addBoard, addTask, addList } from "../util/http";
 import { queryClient } from "../util/http";
 import { BoardsContext } from "../store/BoardContext";
 import { AuthContext } from "../store/AuthContext";
@@ -30,7 +30,6 @@ export default function Modal({ ref, type, listId = null }) {
   } = useMutation({
     mutationFn: addBoard,
     onSuccess: (board) => {
-      console.log("Successfully submitted a new board");
       queryClient.invalidateQueries({ queryKey: ["boards", user?.id] });
       handleBoardSelection(board.title);
       internalRef.current.close();
@@ -48,6 +47,23 @@ export default function Modal({ ref, type, listId = null }) {
   } = useMutation({
     mutationFn: addTask,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks", user?.id, selectedBoard?.id, list.id] });
+      internalRef.current.close();
+    },
+  });
+
+  const {
+    mutate: mutateAddList,
+    isPending: isListPending,
+    isError: isListError,
+    error: listError,
+  } = useMutation({
+    mutationFn: addList,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["lists", user.id, selectedBoard.id, listId],
+      });
+
       internalRef.current.close();
     },
   });
@@ -58,8 +74,9 @@ export default function Modal({ ref, type, listId = null }) {
       const fd = new FormData(e.target);
       const title = fd.get("input-name");
       if (type === "board") mutateAddBoard({ title, userId: user.id });
-      //if (type === "list")
+      if (type === "list") mutateAddList({ title, userId: user.id, boardId: selectedBoard.id });
       if (type === "task") mutateAddTask({ title, userId: user.id, boardId: selectedBoard.id, listId });
+      e.target.reset();
     }
   }
 

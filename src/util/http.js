@@ -81,7 +81,13 @@ export const getLists = async ({ userId, selectedBoardId }) => {
   return lists;
 };
 
-export const addList = async ({ userId, boardId }) => {};
+export const addList = async ({ title, userId, boardId }) => {
+  await addDoc(listsRef, {
+    userId,
+    boardId,
+    title,
+  });
+};
 
 export const addTask = async ({ title, userId, boardId, listId }) => {
   if (!title || !userId || !boardId || !listId) return [];
@@ -95,7 +101,7 @@ export const addTask = async ({ title, userId, boardId, listId }) => {
 };
 
 export const getTasks = async ({ userId, boardId, listId }) => {
-  const queryRef = query(tasksRef, where("userId", "==", userId), where("boardId", "==", selectedBoardId), where("listId", "==", listId));
+  const queryRef = query(tasksRef, where("userId", "==", userId), where("boardId", "==", boardId), where("listId", "==", listId));
 
   const snapshot = await getDocs(queryRef);
   const tasks = snapshot.docs.map((task) => ({

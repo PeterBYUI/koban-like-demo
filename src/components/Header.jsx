@@ -32,12 +32,18 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
     //onSuccess is deprecated in Tanstack v5
     if (isSuccess) {
       console.log("Successfully retrieved the boards: ", boards);
-      handleBoardSelection(boards[0]); //will be undefined if there are no boards on the server
+      handleBoardSelection(boards?.[0]); //will be undefined if there are no boards on the server
     }
   }, [isSuccess, boards]);
 
-  const [selectValue, setSelectValue] = useState(boards ? { id: boards[0].id, title: boards[0].title, lists: boards[0].lists } : ""); //a ref could be used instead
+  const [selectValue, setSelectValue] = useState(selectedBoard ? selectedBoard.title : "");
+  console.log(`SELECTED BOARD TITLE: ${selectedBoard?.title || "no title"}`);
 
+  useEffect(() => {
+    if (!selectValue && boards?.length) {
+      setSelectValue(boards[0].title);
+    }
+  }, [boards]);
   const ref = useRef();
 
   return (
@@ -51,11 +57,12 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
                 <select
                   name="board"
                   id="board"
-                  value={selectValue.title}
+                  value={selectValue}
                   onChange={(e) => {
                     const boardName = e.target.value;
                     const selectedBoard = boards.find((board) => board.title === boardName);
                     handleBoardSelection(selectedBoard);
+                    setSelectValue(e.target.value);
                   }}
                 >
                   {boards.map((board) => (

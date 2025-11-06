@@ -35,7 +35,7 @@ export default function List({ list }) {
     <>
       <figure ref={setNodeRef} className="p-6 rounded-md bg-[rgb(245,242,247)] shadow-[0_2px_5px_rgba(0,0,0,.3)]">
         <header className="flex justify-between items-center">
-          <p className="font-semibold text-lg">{list.name}</p>
+          <p className="font-semibold text-lg">{list.title}</p>
           <button>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-8">
               <path
@@ -71,7 +71,7 @@ export default function List({ list }) {
                   clipRule="evenodd"
                 />
               </svg>
-              <p className="">Add a card</p>
+              <p className="">Add a task</p>
             </button>
           </div>
         </footer>
