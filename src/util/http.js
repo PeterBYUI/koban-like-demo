@@ -1,6 +1,6 @@
 import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebase/config";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, serverTimestamp, orderBy } from "firebase/firestore";
 import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient();
@@ -40,6 +40,7 @@ export const signUpUser = async ({ firstName, lastName, email, password, company
 
 export const addBoard = async ({ title, userId }) => {
   const docRef = await addDoc(boardsRef, {
+    createdAt: serverTimestamp(),
     userId,
     title,
     lists: [],
@@ -47,6 +48,7 @@ export const addBoard = async ({ title, userId }) => {
 
   return {
     id: docRef.id,
+    createdAt: serverTimestamp(),
     userId,
     title,
     lists: [],
@@ -83,6 +85,7 @@ export const getLists = async ({ userId, selectedBoardId }) => {
 
 export const addList = async ({ title, userId, boardId }) => {
   await addDoc(listsRef, {
+    createdAt: serverTimestamp(),
     userId,
     boardId,
     title,
@@ -93,6 +96,7 @@ export const addTask = async ({ title, userId, boardId, listId }) => {
   if (!title || !userId || !boardId || !listId) return [];
 
   await addDoc(tasksRef, {
+    createdAt: serverTimestamp(),
     title,
     userId,
     boardId,
@@ -101,7 +105,13 @@ export const addTask = async ({ title, userId, boardId, listId }) => {
 };
 
 export const getTasks = async ({ userId, boardId, listId }) => {
-  const queryRef = query(tasksRef, where("userId", "==", userId), where("boardId", "==", boardId), where("listId", "==", listId));
+  const queryRef = query(
+    tasksRef,
+    where("userId", "==", userId),
+    where("boardId", "==", boardId),
+    where("listId", "==", listId),
+    orderBy("createdAt", "asc")
+  );
 
   const snapshot = await getDocs(queryRef);
   const tasks = snapshot.docs.map((task) => ({

@@ -47,7 +47,7 @@ export default function Modal({ ref, type, listId = null }) {
   } = useMutation({
     mutationFn: addTask,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks", user?.id, selectedBoard?.id, list.id] });
+      queryClient.invalidateQueries({ queryKey: ["tasks", user?.id, selectedBoard?.id, listId] });
       internalRef.current.close();
     },
   });
@@ -61,7 +61,7 @@ export default function Modal({ ref, type, listId = null }) {
     mutationFn: addList,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["lists", user.id, selectedBoard.id, listId],
+        queryKey: ["lists", user.id, selectedBoard.id],
       });
 
       internalRef.current.close();
@@ -97,7 +97,10 @@ export default function Modal({ ref, type, listId = null }) {
             >
               Cancel
             </button>
-            <button className="bg-violet-700 hover:bg-violet-900 cursor-pointer px-4 py-1 rounded-md text-[#fff] transition-all duration-200">
+            <button
+              disabled={isPending || isListPending || isTaskPending}
+              className="bg-violet-700 hover:bg-violet-900 cursor-pointer px-4 py-1 rounded-md text-[#fff] transition-all duration-200 disabled:bg-violet-200 disabled:text-gray-600"
+            >
               {isPending || isTaskPending ? "Loading..." : "Add"}
             </button>
           </div>

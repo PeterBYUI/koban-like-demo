@@ -31,6 +31,9 @@ export default function List({ list }) {
   const { setNodeRef } = useDroppable({
     id: list.id,
   });
+
+  if (error) console.error(error);
+
   return (
     <>
       <figure ref={setNodeRef} className="p-6 rounded-md bg-[rgb(245,242,247)] shadow-[0_2px_5px_rgba(0,0,0,.3)]">
