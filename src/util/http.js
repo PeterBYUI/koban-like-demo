@@ -1,6 +1,6 @@
 import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebase/config";
-import { collection, addDoc, getDocs, query, where, serverTimestamp, orderBy, doc, updateDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, serverTimestamp, orderBy, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient();
@@ -97,6 +97,11 @@ export const addList = async ({ title, userId, boardId }) => {
 export const updateList = async ({ listId, updates }) => {
   const targetListRef = doc(db, "lists", listId);
   await updateDoc(targetListRef, updates);
+};
+
+export const deleteList = async ({ listId }) => {
+  const targetListRef = doc(db, "lists", listId);
+  await deleteDoc(targetListRef);
 };
 
 //Tasks
