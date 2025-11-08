@@ -31,7 +31,6 @@ export default function Modal({ ref, type, listId = null }) {
     mutationFn: addBoard,
     onSuccess: (board) => {
       queryClient.invalidateQueries({ queryKey: ["boards", user?.id] });
-      handleBoardSelection(board.title);
       internalRef.current.close();
     },
     onError: (err) => {

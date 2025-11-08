@@ -31,17 +31,16 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
   useEffect(() => {
     //onSuccess is deprecated in Tanstack v5
     if (isSuccess) {
-      console.log("Successfully retrieved the boards: ", boards);
-      handleBoardSelection(boards?.[0]); //will be undefined if there are no boards on the server
+      handleBoardSelection(boards?.[boards.length - 1]); //will be undefined if there are no boards on the server
     }
   }, [isSuccess, boards]);
 
   const [selectValue, setSelectValue] = useState(selectedBoard ? selectedBoard.title : "");
-  console.log(`SELECTED BOARD TITLE: ${selectedBoard?.title || "no title"}`);
 
   useEffect(() => {
-    if (!selectValue && boards?.length) {
-      setSelectValue(boards[0].title);
+    console.log("Re-firing because of Tanstack Query");
+    if (boards?.length) {
+      setSelectValue(boards[boards.length - 1].title);
     }
   }, [boards]);
   const ref = useRef();

@@ -59,7 +59,7 @@ export const getBoards = async ({ userId }) => {
   if (!userId) return [];
   // console.log("Fetching boards...");
   // console.log(`UserId: ${userId}`);
-  const queryRef = query(boardsRef, where("userId", "==", userId));
+  const queryRef = query(boardsRef, where("userId", "==", userId), orderBy("createdAt", "asc"));
   const snapshot = await getDocs(queryRef);
   const boards = snapshot.docs.map((doc) => ({
     id: doc.id,
@@ -70,7 +70,6 @@ export const getBoards = async ({ userId }) => {
 
 export const getLists = async ({ userId, selectedBoardId }) => {
   if (!userId || !selectedBoardId) {
-    console.log(`userId: ${userId}, selectedBoardId: ${selectedBoardId}`);
     return [];
   }
   const queryRef = query(listsRef, where("userId", "==", userId), where("boardId", "==", selectedBoardId));
@@ -79,7 +78,6 @@ export const getLists = async ({ userId, selectedBoardId }) => {
     id: doc.id,
     ...doc.data(),
   }));
-  console.log(lists);
   return lists;
 };
 
@@ -118,6 +116,5 @@ export const getTasks = async ({ userId, boardId, listId }) => {
     id: task.id,
     ...task.data(),
   }));
-  console.log(`TASKS: ${tasks}`);
   return tasks;
 };
