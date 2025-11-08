@@ -26,6 +26,7 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
       return getBoards({ userId });
     },
     enabled: !!user?.id,
+    refetchOnWindowFocus: false, //flag to prevent useEffect from switching the tab back to length - 1?
   });
 
   useEffect(() => {
@@ -38,7 +39,6 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
   const [selectValue, setSelectValue] = useState(selectedBoard ? selectedBoard.title : "");
 
   useEffect(() => {
-    console.log("Re-firing because of Tanstack Query");
     if (boards?.length) {
       setSelectValue(boards[boards.length - 1].title);
     }

@@ -1,6 +1,6 @@
 import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebase/config";
-import { collection, addDoc, getDocs, query, where, serverTimestamp, orderBy } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, serverTimestamp, orderBy, doc, updateDoc } from "firebase/firestore";
 import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient();
@@ -10,7 +10,7 @@ const boardsRef = collection(db, "boards");
 const listsRef = collection(db, "lists");
 const tasksRef = collection(db, "tasks");
 
-//check if the code below is able to handle errors
+//Authentication
 
 export const signInUser = async ({ email, password }) => {
   await signInWithEmailAndPassword(auth, email, password);
@@ -37,6 +37,8 @@ export const signUpUser = async ({ firstName, lastName, email, password, company
   return res.user; //so that the user can be set manually with the updated displayName property, since updateProfile() doesn't
   //trigger onAuthStateChanged()
 };
+
+//Boards
 
 export const addBoard = async ({ title, userId }) => {
   const docRef = await addDoc(boardsRef, {
@@ -68,6 +70,8 @@ export const getBoards = async ({ userId }) => {
   return boards;
 };
 
+//Lists
+
 export const getLists = async ({ userId, selectedBoardId }) => {
   if (!userId || !selectedBoardId) {
     return [];
@@ -89,6 +93,13 @@ export const addList = async ({ title, userId, boardId }) => {
     title,
   });
 };
+
+export const updateList = async ({ listId, updates }) => {
+  const targetListRef = doc(db, "lists", listId);
+  await updateDoc(targetListRef, updates);
+};
+
+//Tasks
 
 export const addTask = async ({ title, userId, boardId, listId }) => {
   if (!title || !userId || !boardId || !listId) return [];
