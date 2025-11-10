@@ -31,18 +31,35 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
 
   useEffect(() => {
     //onSuccess is deprecated in Tanstack v5
-    if (isSuccess) {
-      handleBoardSelection(boards?.[boards.length - 1]); //will be undefined if there are no boards on the server
-    }
-  }, [isSuccess, boards]);
+    if (!isSuccess || !boards) return;
 
-  const [selectValue, setSelectValue] = useState(selectedBoard ? selectedBoard.title : "");
+    //if selectedboard still exists
+    const activeBoard = boards.find((board) => board.id === selectedBoard?.id);
+
+    if (activeBoard) {
+      return;
+    } else {
+      if (boards.length > 0) {
+        handleBoardSelection(boards?.[boards?.length - 1]);
+      } else {
+        handleBoardSelection(undefined);
+      }
+    }
+  }, [isSuccess, boards, selectedBoard]);
+
+  const [selectValue, setSelectValue] = useState(selectedBoard ? selectedBoard?.title : "");
 
   useEffect(() => {
-    if (boards?.length) {
-      setSelectValue(boards[boards.length - 1].title);
+    const activeBoard = boards.find((board) => board.id === selectedBoard?.id);
+
+    if (activeBoard) {
+      setSelectValue(activeBoard.title);
+    } else {
+      if (boards.length > 0) {
+        setSelectValue(boards[boards.length - 1].title);
+      } else setSelectValue("");
     }
-  }, [boards]);
+  }, [boards, selectedBoard]);
   const ref = useRef();
 
   return (
@@ -59,7 +76,7 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
                   value={selectValue}
                   onChange={(e) => {
                     const boardName = e.target.value;
-                    const selectedBoard = boards.find((board) => board.title === boardName);
+                    const selectedBoard = boards?.find((board) => board.title === boardName);
                     handleBoardSelection(selectedBoard);
                     setSelectValue(e.target.value);
                   }}

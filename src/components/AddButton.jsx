@@ -1,6 +1,6 @@
 export default function AddButton({ name, onClick }) {
   return (
-    <div className="py-24">
+    <div className="pt-24">
       <p className="text-center">
         <button
           onClick={onClick}

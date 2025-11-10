@@ -70,6 +70,17 @@ export const getBoards = async ({ userId }) => {
   return boards;
 };
 
+export const updateBoard = async ({ boardId, updates }) => {
+  const boardRef = doc(db, "boards", boardId);
+  await updateDoc(boardRef, updates);
+};
+
+export const deleteBoard = async ({ boardId }) => {
+  console.log("deletion underway...");
+  const boardRef = doc(db, "boards", boardId);
+  await deleteDoc(boardRef);
+};
+
 //Lists
 
 export const getLists = async ({ userId, selectedBoardId }) => {

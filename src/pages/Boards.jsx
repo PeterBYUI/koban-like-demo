@@ -41,7 +41,7 @@ export default function Boards() {
         <div className="p-8">
           <div className="min-h-[calc(90vh-32px)] w-1/1 p-8 bg-[rgba(250,250,250,.1)] rounded-md">
             {/*add spinner for isPending */}
-            {lists && <Lists title={selectedBoard?.title} lists={lists} />}
+            {lists && <Lists title={selectedBoard?.title} id={selectedBoard?.id} lists={lists} />}
             {isPending && <p>Fetching the lists...</p>}
             {!isPending && !lists && <AddButton name="list" onClick={() => ref.current.open()} />}
           </div>

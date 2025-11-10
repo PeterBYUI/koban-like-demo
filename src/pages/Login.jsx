@@ -81,7 +81,7 @@ export default function LoginPage() {
           {errors.length > 0 && <Error errors={errors} />}
         </form>
       </div>
-      <div className="bg-violet-700 rounded-b-md lg:rounded-r-md p-8 flex flex-col items-center justify-center gap-4">
+      <div className="bg-violet-700 rounded-b-md lg:rounded-bl-[0] lg:rounded-r-md p-8 flex flex-col items-center justify-center gap-4">
         <h3 className="text-2xl font-semibold text-[#fff] text-center">Don't have an account?</h3>
         <SigningButton onClick={() => navigate("/signup")} title="Sign up" type="white" width="w-3/4" />
       </div>
