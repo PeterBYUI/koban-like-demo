@@ -1,5 +1,5 @@
 import { DndContext } from "@dnd-kit/core";
-import { useRef, useState, useContext } from "react";
+import { useRef, useState, useContext, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { updateBoard, queryClient, deleteBoard } from "../util/http";
 import { AuthContext } from "../store/AuthContext";
@@ -18,6 +18,10 @@ export default function Lists({ title, id, lists }) {
 
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
+
+  useEffect(() => {
+    setNewTitle(title);
+  }, [title]);
 
   function handleOnChange(e) {
     setNewTitle(e.target.value);

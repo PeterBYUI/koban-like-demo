@@ -8,9 +8,15 @@ export default function useSecureInput(checkingFunction) {
     setEnteredData(e.target.value);
   }
 
+  function resetEnteredData() {
+    setEnteredData("");
+    setIsBlurred(false);
+  }
+
   return {
     enteredData,
     handleUpdateData,
+    resetEnteredData,
     setIsBlurred,
     isBlurred,
     error: !checkingFunction(enteredData) && isBlurred,

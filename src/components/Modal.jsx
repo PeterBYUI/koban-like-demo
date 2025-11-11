@@ -4,8 +4,11 @@ import { addBoard, addTask, addList } from "../util/http";
 import { queryClient } from "../util/http";
 import { BoardsContext } from "../store/BoardContext";
 import { AuthContext } from "../store/AuthContext";
+import { isDocNameValid } from "../util/validation";
+import useSecureInput from "../hooks/useInput";
 
 import Input from "./Input";
+import Error from "./Error";
 
 export default function Modal({ ref, type, listId = null }) {
   //boards || lists
@@ -67,14 +70,25 @@ export default function Modal({ ref, type, listId = null }) {
     },
   });
 
+  const {
+    enteredData: docName,
+    resetEnteredData: resetDocName,
+    disabled,
+    setIsBlurred,
+    error: docNameError,
+    handleUpdateData: handleUpdateDocName,
+  } = useSecureInput(isDocNameValid);
+
   function handleSubmitBoardName(e) {
     e.preventDefault();
     if (user?.id) {
-      const fd = new FormData(e.target);
-      const title = fd.get("input-name");
+      // const fd = new FormData(e.target);
+      // const title = fd.get("input-name");
+      const title = docName;
       if (type === "board") mutateAddBoard({ title, userId: user.id });
       if (type === "list") mutateAddList({ title, userId: user.id, boardId: selectedBoard.id });
       if (type === "task") mutateAddTask({ title, userId: user.id, boardId: selectedBoard.id, listId });
+      resetDocName();
       e.target.reset();
     }
   }
@@ -87,22 +101,29 @@ export default function Modal({ ref, type, listId = null }) {
       <h3 className="text-center text-2xl font-semibold text-violet-700 mb-8">Add a new {type}</h3>
       <form onSubmit={handleSubmitBoardName}>
         <div className="flex flex-col items-center gap-6">
-          <Input name="input-name" />
+          <Input name="input-name" value={docName} onChange={handleUpdateDocName} onBlur={setIsBlurred} />
           <div className="flex gap-8">
             <button
               type="button"
-              onClick={() => internalRef.current.close()}
+              onClick={() => {
+                resetDocName();
+                internalRef.current.close();
+              }}
               className="text-red-600 hover:text-red-700 cursor-pointer transition-all duration-200"
             >
               Cancel
             </button>
             <button
-              disabled={isPending || isListPending || isTaskPending}
+              disabled={isPending || isListPending || isTaskPending || disabled}
               className="bg-violet-700 hover:bg-violet-900 cursor-pointer px-4 py-1 rounded-md text-[#fff] transition-all duration-200 disabled:bg-violet-200 disabled:text-gray-600"
             >
               {isPending || isTaskPending ? "Loading..." : "Add"}
             </button>
           </div>
+          {docNameError && docName && <Error errors={[`Your ${type}'s title must be two characters long`]} />}
+          {/* addind docName here prevents the Error from showing up when the user clicks on cancel,
+          which sets isBlurred to true
+          */}
         </div>
       </form>
     </dialog>

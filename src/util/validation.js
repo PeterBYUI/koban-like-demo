@@ -35,3 +35,13 @@ export function isPasswordValid(str) {
   if (password.includes(" ")) return false;
   return true;
 }
+
+export function isDocNameValid(str) {
+  if (!str || typeof str !== "string") return false;
+
+  const docName = str.trim();
+
+  if (docName.length <= 1) return false;
+  if (docName.includes(" ")) return false;
+  return true;
+}

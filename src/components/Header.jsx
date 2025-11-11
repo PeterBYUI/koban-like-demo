@@ -29,37 +29,57 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
     refetchOnWindowFocus: false, //flag to prevent useEffect from switching the tab back to length - 1?
   });
 
+  const [selectValue, setSelectValue] = useState(selectedBoard ? selectedBoard?.title : "");
+
+  const previousBoardsLength = useRef(0);
+
   useEffect(() => {
     //onSuccess is deprecated in Tanstack v5
     if (!isSuccess || !boards) return;
 
-    //if selectedboard still exists
+    //checks if the board that was active before the update still exists
     const activeBoard = boards.find((board) => board.id === selectedBoard?.id);
 
-    if (activeBoard) {
-      return;
+    //if the new length is greater, this means a new board was added.
+    if (boards.length > previousBoardsLength.current) {
+      //in which case we display the newest board
+      handleBoardSelection(boards?.[boards?.length - 1]);
+    } else if (activeBoard) {
+      //if the titles do not match, this means boards changed because the user updated the name of the active board
+      if (activeBoard.title !== selectedBoard?.title) {
+        //we update the context to make sure it reflects the newest version of the active board
+        handleBoardSelection(activeBoard);
+      }
     } else {
-      if (boards.length > 0) {
-        handleBoardSelection(boards?.[boards?.length - 1]);
-      } else {
+      //if the activeBoard returns false, then this means the active board was deleted
+      if (boards.length <= 0) {
+        //if it was the last board of the list, then we set selectedBoard to undefined as the user ran out of boards
         handleBoardSelection(undefined);
+      } else {
+        //however, if there are still boards in the list, we want to display the most recent one
+        handleBoardSelection(boards?.[boards?.length - 1]);
       }
     }
+    previousBoardsLength.current = boards?.length ?? 0;
   }, [isSuccess, boards, selectedBoard]);
 
-  const [selectValue, setSelectValue] = useState(selectedBoard ? selectedBoard?.title : "");
-
   useEffect(() => {
-    const activeBoard = boards.find((board) => board.id === selectedBoard?.id);
-
-    if (activeBoard) {
-      setSelectValue(activeBoard.title);
+    //when the first useEffect hook updates the context, this hook will run (due to selectedBoard being in the dependency array)
+    //first, it will retrieve the current board (activeBoard in the above hook represents the board the user was working
+    //on before the update; whereas here it represents the newly active board that shows up as a result of the update
+    const newlyActiveBoard = boards?.find((board) => board.id === selectedBoard?.id);
+    if (newlyActiveBoard) {
+      //if there is indeed such a newly active board, we set the select value to its title
+      setSelectValue(newlyActiveBoard.title);
     } else {
-      if (boards.length > 0) {
+      if (boards?.length > 0) {
+        //otherwise, we retrieve the name of the latest board (consistent with the above-mentioned logic)
         setSelectValue(boards[boards.length - 1].title);
-      } else setSelectValue("");
+      } else setSelectValue(""); //if there are no boards remaining, selectedBoard will be undefined
+      //so we set the select value to an empty string (No Boards (Yet) will be displayed instead)
     }
   }, [boards, selectedBoard]);
+
   const ref = useRef();
 
   return (

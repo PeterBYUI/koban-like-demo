@@ -1,6 +1,18 @@
 import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebase/config";
-import { collection, addDoc, getDocs, query, where, serverTimestamp, orderBy, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  serverTimestamp,
+  orderBy,
+  doc,
+  updateDoc,
+  deleteDoc,
+  writeBatch,
+} from "firebase/firestore";
 import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient();
@@ -76,9 +88,26 @@ export const updateBoard = async ({ boardId, updates }) => {
 };
 
 export const deleteBoard = async ({ boardId }) => {
-  console.log("deletion underway...");
-  const boardRef = doc(db, "boards", boardId);
-  await deleteDoc(boardRef);
+  const batch = writeBatch(db);
+
+  const listQueryRef = query(listsRef, where("boardId", "==", boardId));
+  const listsSnapshot = await getDocs(listQueryRef);
+
+  listsSnapshot.docs.forEach((listDoc) => {
+    batch.delete(listDoc.ref);
+  });
+
+  const tasksQueryRef = query(tasksRef, where("boardId", "==", boardId));
+  const tasksSnapshot = await getDocs(tasksQueryRef);
+
+  tasksSnapshot.docs.forEach((taskDoc) => {
+    batch.delete(taskDoc.ref);
+  });
+
+  const boardDocRef = doc(db, "boards", boardId);
+  batch.delete(boardDocRef);
+
+  await batch.commit();
 };
 
 //Lists
@@ -111,8 +140,20 @@ export const updateList = async ({ listId, updates }) => {
 };
 
 export const deleteList = async ({ listId }) => {
-  const targetListRef = doc(db, "lists", listId);
-  await deleteDoc(targetListRef);
+  const batch = writeBatch(db);
+
+  const tasksQueryRef = query(tasksRef, where("listId", "==", listId));
+  const tasksSnapshot = await getDocs(tasksQueryRef);
+
+  tasksSnapshot.docs.forEach((taskDoc) => {
+    batch.delete(taskDoc.ref);
+  });
+
+  const listDocRef = doc(db, "lists", listId);
+
+  batch.delete(listDocRef);
+
+  await batch.commit();
 };
 
 //Tasks
