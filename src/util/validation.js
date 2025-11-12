@@ -42,6 +42,6 @@ export function isDocNameValid(str) {
   const docName = str.trim();
 
   if (docName.length <= 1) return false;
-  if (docName.includes(" ")) return false;
+  // if (docName.includes(" ")) return false;
   return true;
 }

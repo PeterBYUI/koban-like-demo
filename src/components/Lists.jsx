@@ -1,7 +1,7 @@
 import { DndContext } from "@dnd-kit/core";
 import { useRef, useState, useContext, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { updateBoard, queryClient, deleteBoard } from "../util/http";
+import { updateBoard, queryClient, deleteBoard, updateTask } from "../util/http";
 import { AuthContext } from "../store/AuthContext";
 
 import AddButton from "./AddButton";
@@ -11,7 +11,7 @@ import EditButton from "./EditButton";
 import EditInput from "./EditInput";
 import DeleteButton from "./DeleteButton";
 
-export default function Lists({ title, id, lists }) {
+export default function Lists({ title, boardId, lists }) {
   const ref = useRef();
 
   const { user } = useContext(AuthContext);
@@ -25,16 +25,6 @@ export default function Lists({ title, id, lists }) {
 
   function handleOnChange(e) {
     setNewTitle(e.target.value);
-  }
-
-  function handleOnDragEnd(e) {
-    const { active, over } = e;
-
-    console.log(active.id);
-
-    if (over) {
-      console.log(over.id);
-    }
   }
 
   const { mutate } = useMutation({
@@ -70,6 +60,67 @@ export default function Lists({ title, id, lists }) {
     },
   });
 
+  const { mutate: changeLists } = useMutation({
+    mutationFn: updateTask,
+    //{taskId, updates: {listId}}
+    onMutate: async (data) => {
+      const taskId = data.taskId;
+      const listId = data.updates.listId;
+
+      await queryClient.cancelQueries({ queryKey: ["tasks"] });
+
+      const previousTasks = queryClient.getQueriesData({ queryKey: ["tasks"] });
+
+      let movedTask = null;
+      let oldListKey = null;
+
+      for (const [key, data] of previousTasks) {
+        if (!data) continue;
+
+        const task = data.find((task) => task.id === taskId);
+        if (task) {
+          if (task.listId === listId) return { previousTasks }; //cancels the operation if the list was dragged in the same
+          //list it alread belongs to
+          movedTask = { ...task, listId };
+          oldListKey = key;
+          break;
+        }
+      }
+
+      if (!movedTask || !oldListKey) return { previousTasks };
+
+      const oldKeyData = queryClient.getQueryData(oldListKey || []);
+      queryClient.setQueryData(
+        oldListKey,
+        oldKeyData.filter((task) => task.id !== taskId)
+      );
+
+      const newListKey = ["tasks", user?.id, boardId, listId];
+
+      const newListTasks = queryClient.getQueryData(newListKey) || [];
+      queryClient.setQueryData(newListKey, [...newListTasks, movedTask]);
+
+      return { previousTasks };
+    },
+    onError: (error, data, context) => {
+      console.log(error);
+      queryClient.setQueriesData(["tasks", context.previousTasks]);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
+  function handleOnDragEnd(e) {
+    const { active, over } = e;
+
+    if (over) {
+      const newListId = over.id;
+      const taskId = active.id;
+      changeLists({ taskId, updates: { listId: newListId } });
+    }
+  }
+
   if (lists.length > 0) {
     return (
       <>
@@ -102,13 +153,13 @@ export default function Lists({ title, id, lists }) {
             isEditing={isEditing}
             onClick={() => {
               if (isEditing) {
-                mutate({ boardId: id, updates: { title: newTitle } });
+                mutate({ boardId, updates: { title: newTitle } });
               }
               setIsEditing((previousValue) => !previousValue);
             }}
             type="board"
           />
-          <DeleteButton deletion={() => deletion({ boardId: id })} type="board" />
+          <DeleteButton deletion={() => deletion({ boardId })} type="board" />
         </div>
         <DndContext onDragEnd={handleOnDragEnd}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -136,12 +187,12 @@ export default function Lists({ title, id, lists }) {
               isEditing={isEditing}
               onClick={() => {
                 if (isEditing) {
-                  mutate({ boardId: id, updates: { title: newTitle } });
+                  mutate({ boardId, updates: { title: newTitle } });
                 }
                 setIsEditing((previousValue) => !previousValue);
               }}
             />
-            <DeleteButton type="board" deletion={() => deletion({ boardId: id })} />
+            <DeleteButton type="board" deletion={() => deletion({ boardId })} />
           </div>
         </div>
         <Modal ref={ref} type="list" />

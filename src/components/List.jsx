@@ -99,7 +99,7 @@ export default function List({ list }) {
               {tasks.map((task) => {
                 return (
                   <li key={task.id}>
-                    <Task task={task} />
+                    <Task task={task} listId={list.id} />
                   </li>
                 );
               })}

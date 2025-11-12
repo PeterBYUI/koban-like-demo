@@ -5,7 +5,15 @@ export default function DeleteButton({ deletion, type }) {
   if (type === "list") styling += "hover:text-red-600";
 
   return (
-    <button onClick={deletion} className={styling}>
+    <button
+      onClick={() => {
+        const proceed = window.confirm("Are you sure?");
+        if (proceed) {
+          deletion();
+        }
+      }}
+      className={styling}
+    >
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
         <path
           strokeLinecap="round"
