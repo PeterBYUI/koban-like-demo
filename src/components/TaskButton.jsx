@@ -8,7 +8,7 @@ export default function TaskButton({ buttonType, isPending, isSuccess, children,
   if (buttonType === "delete" && !disabled) {
     buttonStyle += "hover:text-red-400 cursor-pointer";
   } else if (buttonType === "edit" && !disabled) {
-    buttonStyle += "hover:text-violet-700";
+    buttonStyle += "hover:text-violet-700 cursor-pointer";
   } else if (disabled) {
     buttonStyle = "cursor-not-allowed";
   }

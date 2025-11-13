@@ -97,14 +97,52 @@ export default function Task({ task, listId }) {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const { mutate: editTask } = useMutation({
-    mutationFn: updateTask,
-    onMutate: async (data) => {},
+  const [updates, setUpdates] = useState({
+    title: task.title,
+    isUrgent: task.isUrgent,
   });
 
-  function handleUpdatedTaskSubmit() {
-    console.log("Submission!!!!");
+  function handleOnChangeUpdates(e, isTitle) {
+    setUpdates((pv) => {
+      if (isTitle) {
+        return { ...pv, title: e.target.value };
+      } else {
+        return { ...pv, isUrgent: e.target.checked };
+      }
+    });
   }
+
+  const { mutate: editTask } = useMutation({
+    mutationFn: updateTask,
+    onMutate: async (data) => {
+      await queryClient.cancelQueries({ queryKey: ["tasks", user?.id, selectedBoard?.id, listId] });
+      const previousTasks = queryClient.getQueryData(["tasks", user?.id, selectedBoard?.id, listId]);
+
+      const updatedTasks = previousTasks.map((targetTask) => {
+        if (targetTask.id === task.id) {
+          return {
+            ...targetTask,
+            ...updates,
+          };
+        } else return targetTask;
+      });
+
+      queryClient.setQueryData(["tasks", user?.id, selectedBoard?.id, listId], updatedTasks);
+      return { previousTasks };
+    },
+    onError: (error, data, context) => {
+      queryClient.setQueryData(["tasks", user?.id, selectedBoard?.id, listId], context.previousTasks);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks", user?.id, selectedBoard?.id, listId] });
+    },
+    onSuccess: () => {
+      setUpdates({
+        title: task.title,
+        isUrgent: task.isUrgent,
+      });
+    },
+  });
 
   return (
     <div ref={setNodeRef} {...attributes} {...listeners} style={style} className={styling}>
@@ -134,19 +172,35 @@ export default function Task({ task, listId }) {
           <p>{task.title}</p>
         </div>
       ) : (
-        <div className="flex gap-4 items-center">
-          <input className="bg-slate-200 rounded-md px-1 w-3/5" type="text" name="new-title" defaultValue={task.title} />
+        <div className="flex flex-col gap-2 justify-center">
+          <input
+            className="bg-slate-200 rounded-md p-1 w-4/5"
+            type="text"
+            name="new-title"
+            value={updates.title}
+            onPointerDown={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            onChange={(e) => handleOnChangeUpdates(e, true)}
+          />
           <div className="flex gap-2">
-            <input type="checkbox" name="urgent" id="urgent" defaultChecked={task.isUrgent} />
-            <label htmlFor="urgent">is urgent</label>
+            <input
+              type="checkbox"
+              onPointerDown={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              id="urgent"
+              checked={updates.isUrgent}
+              onChange={(e) => handleOnChangeUpdates(e, false)}
+            />
+            <label htmlFor="urgent">{updates.title} is urgent</label>
           </div>
         </div>
       )}
       <div className="flex gap-2 items-center">
         <TaskButton
-          type={isEditing ? "submit" : "button"}
           buttonType="edit"
           onClick={() => {
+            if (isEditing) editTask({ taskId: task.id, updates });
             setIsEditing((pv) => !pv);
           }}
           onPointerDown={(e) => e.stopPropagation()}
