@@ -87,7 +87,11 @@ export default function Modal({ ref, type, listId = null }) {
       const title = docName;
       if (type === "board") mutateAddBoard({ title, userId: user.id });
       if (type === "list") mutateAddList({ title, userId: user.id, boardId: selectedBoard.id });
-      if (type === "task") mutateAddTask({ title, userId: user.id, boardId: selectedBoard.id, listId });
+      if (type === "task") {
+        const fd = new FormData(e.target);
+        const isUrgent = fd.get("urgent");
+        mutateAddTask({ title, userId: user.id, boardId: selectedBoard.id, listId, isUrgent: isUrgent === "on" });
+      }
       resetDocName();
       e.target.reset();
     }
@@ -102,6 +106,12 @@ export default function Modal({ ref, type, listId = null }) {
       <form onSubmit={handleSubmitBoardName}>
         <div className="flex flex-col items-center gap-6">
           <Input name="input-name" value={docName} onChange={handleUpdateDocName} onBlur={setIsBlurred} />
+          {type === "task" && docName && (
+            <div className="w-1/1 lg:w-2/3 mx-auto flex gap-4">
+              <input type="checkbox" name="urgent" id="urgent" />
+              <label htmlFor="urgent">{docName} is urgent</label>
+            </div>
+          )}
           <div className="flex gap-8">
             <button
               type="button"

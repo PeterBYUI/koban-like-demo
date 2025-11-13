@@ -158,7 +158,7 @@ export const deleteList = async ({ listId }) => {
 
 //Tasks
 
-export const addTask = async ({ title, userId, boardId, listId }) => {
+export const addTask = async ({ title, userId, boardId, listId, isUrgent }) => {
   if (!title || !userId || !boardId || !listId) return [];
 
   await addDoc(tasksRef, {
@@ -168,6 +168,7 @@ export const addTask = async ({ title, userId, boardId, listId }) => {
     userId,
     boardId,
     listId,
+    isUrgent,
   });
 };
 
