@@ -40,7 +40,7 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
     //checks if the board that was active before the update still exists
     const activeBoard = boards.find((board) => board.id === selectedBoard?.id);
 
-    //if the new length is greater, this means a new board was added.
+    //if the new length is greater, this means a new board was added
     if (boards.length > previousBoardsLength.current) {
       //in which case we display the newest board
       handleBoardSelection(boards?.[boards?.length - 1]);

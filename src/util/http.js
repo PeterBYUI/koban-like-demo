@@ -192,3 +192,8 @@ export const updateTask = async ({ taskId, updates }) => {
   const targetTaskRef = doc(db, "tasks", taskId);
   await updateDoc(targetTaskRef, updates);
 };
+
+export const deleteTask = async ({ taskId }) => {
+  const targetTaskRef = doc(db, "tasks", taskId);
+  await deleteDoc(targetTaskRef);
+};
