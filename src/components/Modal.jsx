@@ -130,7 +130,7 @@ export default function Modal({ ref, type, listId = null }) {
               {isPending || isTaskPending ? "Loading..." : "Add"}
             </button>
           </div>
-          {docNameError && docName && <Error errors={[`Your ${type}'s title must be two characters long`]} />}
+          {docNameError && docName && <Error errors={[`Your ${type}'s title must be between 2 and 15 characters long`]} />}
           {/* addind docName here prevents the Error from showing up when the user clicks on cancel,
           which sets isBlurred to true
           */}

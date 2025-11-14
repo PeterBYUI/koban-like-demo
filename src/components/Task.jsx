@@ -4,9 +4,9 @@ import { updateTask, queryClient, deleteTask } from "../util/http";
 import { AuthContext } from "../store/AuthContext";
 import { BoardsContext } from "../store/BoardContext";
 import { useContext, useState, useEffect } from "react";
+import { isDocNameValid } from "../util/validation";
 
 import TaskButton from "./TaskButton";
-import EditInput from "./EditInput";
 
 export default function Task({ task, listId }) {
   const { user } = useContext(AuthContext);
@@ -54,7 +54,6 @@ export default function Task({ task, listId }) {
     mutate: delTask,
     isPending: isDeletionPending,
     isError,
-    error,
     isSuccess,
   } = useMutation({
     mutationFn: deleteTask,
@@ -102,6 +101,11 @@ export default function Task({ task, listId }) {
     isUrgent: task.isUrgent,
   });
 
+  const docNameError = updates.title && !isDocNameValid(updates.title);
+  const editInputStyling = docNameError
+    ? "bg-slate-200 rounded-md p-1 w-4/5 outline-2 outline-red-400"
+    : "bg-slate-200 rounded-md p-1 w-4/5";
+
   function handleOnChangeUpdates(e, isTitle) {
     setUpdates((pv) => {
       if (isTitle) {
@@ -144,6 +148,8 @@ export default function Task({ task, listId }) {
     },
   });
 
+  const open = !isError;
+
   return (
     <div ref={setNodeRef} {...attributes} {...listeners} style={style} className={styling}>
       {!isEditing ? (
@@ -169,12 +175,34 @@ export default function Task({ task, listId }) {
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
           </TaskButton>
-          <p>{task.title}</p>
+          <div className="flex flex-col">
+            {!isError && <p>{task.title}</p>}
+            {isError && (
+              <div className="flex items-center gap-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-5 text-red-400"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                  />
+                </svg>
+                <p>{task.title}</p>
+              </div>
+            )}
+            {isError && <p className="text-sm text-red-400">Failed to delete task</p>}
+          </div>
         </div>
       ) : (
         <div className="flex flex-col gap-2 justify-center">
           <input
-            className="bg-slate-200 rounded-md p-1 w-4/5"
+            className={editInputStyling}
             type="text"
             name="new-title"
             value={updates.title}
@@ -192,7 +220,7 @@ export default function Task({ task, listId }) {
               checked={updates.isUrgent}
               onChange={(e) => handleOnChangeUpdates(e, false)}
             />
-            <label htmlFor="urgent">{updates.title} is urgent</label>
+            <label htmlFor="urgent">urgent</label>
           </div>
         </div>
       )}

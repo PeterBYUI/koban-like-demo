@@ -35,8 +35,6 @@ export default function Boards() {
     enabled: !!selectedBoard?.id && !!user?.id,
   });
 
-  if (isError) console.error(error);
-
   return (
     <>
       {selectedBoard ? (

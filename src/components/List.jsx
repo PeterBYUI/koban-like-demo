@@ -35,8 +35,6 @@ export default function List({ list }) {
     id: list.id,
   });
 
-  if (error) console.error(error);
-
   const [isEditing, setIsEditing] = useState(false);
   const [newListTitle, setNewListTitle] = useState(list.title);
   const handleOnChange = (e) => {
