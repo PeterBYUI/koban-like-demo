@@ -3,6 +3,8 @@ import { useMutation } from "@tanstack/react-query";
 import { signInUser } from "../util/http";
 import { isEmailValid } from "../util/validation";
 import { isPasswordValid } from "../util/validation";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../store/AuthContext";
 import useSecureInput from "../hooks/useInput";
 
 import SigningButton from "../components/SigningButton";
@@ -48,6 +50,13 @@ export default function LoginPage() {
     const password = fd.get("password"); //replace with custom hooks to check the validity of the password
     mutate({ email, password });
   };
+
+  const { user } = useContext(AuthContext);
+  useEffect(() => {
+    if (user) {
+      navigate("/boards");
+    }
+  }, [user, navigate]);
 
   return (
     <CredientialCard styling="grid grid-cols-1 lg:grid-cols-[2fr_1fr]">

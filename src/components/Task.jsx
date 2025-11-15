@@ -12,6 +12,7 @@ export default function Task({ task, listId }) {
   const { user } = useContext(AuthContext);
   const { selectedBoard } = useContext(BoardsContext);
 
+  //Drag & drop implementation
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task.id,
   });
@@ -22,6 +23,11 @@ export default function Task({ task, listId }) {
       }
     : undefined;
 
+  /********************
+   ***** QUERIES  *****
+   ********************/
+
+  //task updating query – optimistic uptdating
   const { mutate } = useMutation({
     mutationFn: updateTask,
     onMutate: async (data) => {
@@ -50,6 +56,7 @@ export default function Task({ task, listId }) {
     },
   });
 
+  //task deletion query
   const {
     mutate: delTask,
     isPending: isDeletionPending,
@@ -62,60 +69,7 @@ export default function Task({ task, listId }) {
     },
   });
 
-  const [isChecked, setIsChecked] = useState(task.completed);
-  const [mouseisDown, setMouseIsDown] = useState(false);
-
-  let styling = "bg-[#fff] shadow-[0_2px_5px_rgba(0,0,0,.3)] rounded-md p-2 flex justify-between border-t-4 ";
-
-  if (!mouseisDown) {
-    styling += "cursor-grab ";
-  } else {
-    styling += "cursor-grabbing ";
-  }
-
-  if (isChecked) {
-    styling += "text-slate-300 hover:text-slate-400 line-through border-t-slate-500";
-  } else if (task.isUrgent) {
-    styling += "text-slate-500 hover:text-slate-800 border-t-red-400";
-  } else {
-    styling += "text-slate-500 hover:text-slate-800 border-t-emerald-400";
-  }
-
-  useEffect(() => {
-    const handleMouseDown = () => setMouseIsDown(true);
-    const handleMouseUp = () => setMouseIsDown(false);
-
-    document.addEventListener("mousedown", handleMouseDown);
-    document.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      document.removeEventListener("mousedown", handleMouseDown);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, []);
-
-  const [isEditing, setIsEditing] = useState(false);
-
-  const [updates, setUpdates] = useState({
-    title: task.title,
-    isUrgent: task.isUrgent,
-  });
-
-  const docNameError = updates.title && !isDocNameValid(updates.title);
-  const editInputStyling = docNameError
-    ? "bg-slate-200 rounded-md p-1 w-4/5 outline-2 outline-red-400"
-    : "bg-slate-200 rounded-md p-1 w-4/5";
-
-  function handleOnChangeUpdates(e, isTitle) {
-    setUpdates((pv) => {
-      if (isTitle) {
-        return { ...pv, title: e.target.value };
-      } else {
-        return { ...pv, isUrgent: e.target.checked };
-      }
-    });
-  }
-
+  //Task editon query – optimistic updating
   const { mutate: editTask } = useMutation({
     mutationFn: updateTask,
     onMutate: async (data) => {
@@ -148,7 +102,74 @@ export default function Task({ task, listId }) {
     },
   });
 
-  const open = !isError;
+  /********************
+   *****  STYLING  ****
+   ********************/
+
+  //Task styling
+  const [isChecked, setIsChecked] = useState(task.completed);
+  const [mouseisDown, setMouseIsDown] = useState(false);
+
+  //changes the cursor when the user is actively grabbing a task
+  useEffect(() => {
+    const handleMouseDown = () => setMouseIsDown(true);
+    const handleMouseUp = () => setMouseIsDown(false);
+
+    document.addEventListener("mousedown", handleMouseDown);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousedown", handleMouseDown);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
+  //default stylinh]g
+  let styling = "bg-[#fff] shadow-[0_2px_5px_rgba(0,0,0,.3)] rounded-md p-2 flex justify-between border-t-4 ";
+
+  //updates the styling based on whether or not the user is actively dragging (grabbing) a task
+  if (!mouseisDown) {
+    styling += "cursor-grab ";
+  } else {
+    styling += "cursor-grabbing ";
+  }
+
+  //reflects whether a task was marked as urgent or completed
+  if (isChecked) {
+    styling += "text-slate-300 hover:text-slate-400 line-through border-t-slate-500";
+  } else if (task.isUrgent) {
+    styling += "text-slate-500 hover:text-slate-800 border-t-red-400";
+  } else {
+    styling += "text-slate-500 hover:text-slate-800 border-t-emerald-400";
+  }
+
+  /********************
+   *** TASK EDITION ***
+   ********************/
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  //stateful object that matches the format expected by the editTask function (updates: {...})
+  const [updates, setUpdates] = useState({
+    title: task.title,
+    isUrgent: task.isUrgent,
+  });
+
+  //lets the user know if the title doesn't abide by the rules previously shown to him in the Modal component
+  const docNameError = updates.title && !isDocNameValid(updates.title);
+  const editInputStyling = docNameError
+    ? "bg-slate-200 rounded-md p-1 w-4/5 outline-2 outline-red-400"
+    : "bg-slate-200 rounded-md p-1 w-4/5";
+
+  function handleOnChangeUpdates(e, isTitle) {
+    setUpdates((pv) => {
+      if (isTitle) {
+        return { ...pv, title: e.target.value };
+      } else {
+        return { ...pv, isUrgent: e.target.checked };
+      }
+    });
+  }
 
   return (
     <div ref={setNodeRef} {...attributes} {...listeners} style={style} className={styling}>
