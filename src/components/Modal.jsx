@@ -1,4 +1,4 @@
-import { useImperativeHandle, useRef, useContext } from "react";
+import { useContext } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { addBoard, addTask, addList } from "../util/http";
 import { queryClient } from "../util/http";
@@ -7,23 +7,13 @@ import { AuthContext } from "../store/AuthContext";
 import { isDocNameValid } from "../util/validation";
 import useSecureInput from "../hooks/useInput";
 
+import Dialog from "./Dialog";
 import Input from "./Input";
 import Error from "./Error";
 
 export default function Modal({ ref, type, listId = null }) {
-  //boards || lists
-  const internalRef = useRef();
-
   const { selectedBoard, handleBoardSelection } = useContext(BoardsContext);
   const { user } = useContext(AuthContext);
-
-  useImperativeHandle(ref, () => {
-    return {
-      open() {
-        internalRef.current.showModal();
-      },
-    };
-  });
 
   const {
     mutate: mutateAddBoard,
@@ -34,7 +24,7 @@ export default function Modal({ ref, type, listId = null }) {
     mutationFn: addBoard,
     onSuccess: (board) => {
       queryClient.invalidateQueries({ queryKey: ["boards", user?.id] });
-      internalRef.current.close();
+      ref.current.close();
     },
     onError: (err) => {
       console.error(err);
@@ -50,7 +40,7 @@ export default function Modal({ ref, type, listId = null }) {
     mutationFn: addTask,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", user?.id, selectedBoard?.id, listId] });
-      internalRef.current.close();
+      ref.current.close();
     },
   });
 
@@ -65,8 +55,7 @@ export default function Modal({ ref, type, listId = null }) {
       queryClient.invalidateQueries({
         queryKey: ["lists", user.id, selectedBoard.id],
       });
-
-      internalRef.current.close();
+      ref.current.close();
     },
   });
 
@@ -98,10 +87,7 @@ export default function Modal({ ref, type, listId = null }) {
   }
 
   return (
-    <dialog
-      ref={internalRef}
-      className="bg-[#e6e6fa] mt-16 w-2/3 lg:w-1/3 mx-auto p-8 rounded-md backdrop:bg-slate-950 backdrop:opacity-25"
-    >
+    <Dialog ref={ref}>
       <h3 className="text-center text-2xl font-semibold text-violet-700 mb-8">Add a new {type}</h3>
       <form onSubmit={handleSubmitBoardName}>
         <div className="flex flex-col items-center gap-6">
@@ -117,7 +103,7 @@ export default function Modal({ ref, type, listId = null }) {
               type="button"
               onClick={() => {
                 resetDocName();
-                internalRef.current.close();
+                ref.current.close();
               }}
               className="text-red-600 hover:text-red-700 cursor-pointer transition-all duration-200"
             >
@@ -136,6 +122,6 @@ export default function Modal({ ref, type, listId = null }) {
           */}
         </div>
       </form>
-    </dialog>
+    </Dialog>
   );
 }

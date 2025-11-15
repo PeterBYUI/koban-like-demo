@@ -7,6 +7,8 @@ import { getLists } from "../util/http";
 import Lists from "../components/Lists";
 import Modal from "../components/Modal";
 import AddButton from "../components/AddButton";
+import Dialog from "../components/Dialog";
+import Alert from "../components/Alert";
 
 //import useqQuery and enable the query only when we have a selectedBoard. Fetch the lists using the board's id.
 //invalidate the query in the select's onChange prop.
@@ -18,12 +20,12 @@ export default function Boards() {
   const { selectedBoard } = useContext(BoardsContext);
 
   const ref = useRef();
+  const alertRef = useRef();
 
   const {
     data: lists,
     isPending,
     isError,
-    error,
   } = useQuery({
     queryKey: ["lists", user?.id, selectedBoard?.id],
     queryFn: ({ queryKey, signal }) => {
@@ -34,6 +36,12 @@ export default function Boards() {
     },
     enabled: !!selectedBoard?.id && !!user?.id,
   });
+
+  useEffect(() => {
+    if (isError) {
+      alertRef.current.open();
+    }
+  }, [isError]);
 
   return (
     <>
@@ -50,6 +58,7 @@ export default function Boards() {
         <AddButton name="board" onClick={() => ref.current.open()} />
       )}
       <Modal ref={ref} type="board" />
+      <Alert ref={alertRef} errorMessage="Failed to fetch lists. Check your internet connection." />
     </>
   );
 }

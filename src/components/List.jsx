@@ -1,5 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
-import { useRef, useContext, useState } from "react";
+import { useRef, useContext, useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { AuthContext } from "../store/AuthContext";
 import { BoardsContext } from "../store/BoardContext";
@@ -10,9 +10,11 @@ import Modal from "./Modal";
 import EditInput from "./EditInput";
 import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
+import Alert from "./Alert";
 
 export default function List({ list }) {
   const ref = useRef();
+  const alertRef = useRef();
 
   const { user } = useContext(AuthContext);
   const { selectedBoard } = useContext(BoardsContext);
@@ -21,7 +23,6 @@ export default function List({ list }) {
     data: tasks,
     isPending,
     isError,
-    error,
   } = useQuery({
     queryKey: ["tasks", user?.id, selectedBoard?.id, list.id],
     queryFn: ({ queryKey, signal }) => {
@@ -30,6 +31,12 @@ export default function List({ list }) {
     },
     enabled: !!user?.id && !!selectedBoard?.id,
   });
+
+  useEffect(() => {
+    if (isError) {
+      alertRef.current.open();
+    }
+  }, [isError]);
 
   const { setNodeRef } = useDroppable({
     id: list.id,
@@ -122,6 +129,7 @@ export default function List({ list }) {
         </footer>
       </figure>
       <Modal ref={ref} type="task" listId={list.id} />
+      <Alert ref={alertRef} errorMessage="Failed to fetch tasks. Check your internet connection." />
     </>
   );
 }

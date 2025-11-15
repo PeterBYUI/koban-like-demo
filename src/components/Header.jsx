@@ -7,17 +7,20 @@ import { getBoards } from "../util/http";
 
 import ProfileIcon from "./ProfileIcon";
 import Modal from "./Modal";
+import Alert from "./Alert";
 
 export default function Header({ setSideBarIsOpen, mutate, isPending }) {
   const { user } = useContext(AuthContext);
   const { selectedBoard, handleBoardSelection } = useContext(BoardsContext);
+
+  const ref = useRef();
+  const alertRef = useRef();
 
   const {
     data: boards,
     isPending: isBoardsPending,
     isSuccess,
     isError,
-    error,
   } = useQuery({
     queryKey: ["boards", user?.id],
     queryFn: ({ queryKey, signal }) => {
@@ -28,6 +31,12 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
     enabled: !!user?.id,
     refetchOnWindowFocus: false, //flag to prevent useEffect from switching the tab back to length - 1?
   });
+
+  useEffect(() => {
+    if (isError) {
+      alertRef.current.open();
+    }
+  }, [isError]);
 
   const [selectValue, setSelectValue] = useState(selectedBoard ? selectedBoard?.title : "");
 
@@ -79,8 +88,6 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
       //so we set the select value to an empty string (No Boards (Yet) will be displayed instead)
     }
   }, [boards, selectedBoard]);
-
-  const ref = useRef();
 
   return (
     <>
@@ -154,6 +161,7 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
           </div>
         </nav>
       </header>
+      <Alert ref={alertRef} errorMessage="Failed to fetch boards. Check your internet connection." />
     </>
   );
 }
