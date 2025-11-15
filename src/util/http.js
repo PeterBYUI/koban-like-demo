@@ -1,4 +1,4 @@
-import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import {
   collection,
@@ -48,6 +48,10 @@ export const signUpUser = async ({ firstName, lastName, email, password, company
   });
   return res.user; //so that the user can be set manually with the updated displayName property, since updateProfile() doesn't
   //trigger onAuthStateChanged()
+};
+
+export const forgotPassword = async ({ email }) => {
+  await sendPasswordResetEmail(auth, email);
 };
 
 //Boards
