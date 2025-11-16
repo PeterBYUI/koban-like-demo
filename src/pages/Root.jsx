@@ -11,7 +11,7 @@ export default function RootPage() {
     <>
       {user && <TopContent />} {/*to avoid re-rendering the entire app every time the user opens the sidebar*/}
       {!user && (
-        <h1 className="text-5xl text-[#fff] font-semibold text-center mt-16 text-shadow-[0_5px_10px_rgba(0,0,0,.3)]">Trello Demo app</h1>
+        <h1 className="text-5xl text-[#fff] font-semibold text-center mt-16 text-shadow-[0_5px_10px_rgba(0,0,0,.3)]">Koban Demo app</h1>
       )}
       <main>
         <Outlet />
