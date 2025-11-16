@@ -17,7 +17,7 @@ export default function Dialog({ ref, children }) {
   return (
     <dialog
       ref={internalRef}
-      className="bg-[#e6e6fa] mt-16 w-2/3 lg:w-1/3 mx-auto p-8 rounded-md backdrop:bg-slate-950 backdrop:opacity-25"
+      className="bg-[#e6e6fa] mt-16 w-9/10 md:w-3/4 lg:w-2/3 lg:w-1/3 mx-auto p-8 rounded-md backdrop:bg-slate-950 backdrop:opacity-25"
     >
       {children}
     </dialog>

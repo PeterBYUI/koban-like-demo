@@ -46,7 +46,7 @@ export default function Boards() {
   return (
     <>
       {selectedBoard ? (
-        <div className="p-8">
+        <div className="p-4 lg:p-8">
           <div className="min-h-[calc(90vh-32px)] w-1/1 p-8 bg-[rgba(250,250,250,.1)] rounded-md">
             {/*add spinner for isPending */}
             {lists && <Lists title={selectedBoard?.title} boardId={selectedBoard?.id} lists={lists} />}

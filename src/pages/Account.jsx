@@ -38,12 +38,12 @@ export default function Account() {
 
   return (
     <>
-      <section className="p-8">
+      <section className="p-4 lg:p-8">
         <div className="min-h-[calc(90vh-32px)] w-1/1 lg:w-2/3 mx-auto p-8 bg-[rgba(250,250,250,.1)] text-[#fff] rounded-md">
           <Button onClick={() => navigate("/boards")} styling="mb-4 text-[#fff] hover:text-[#ddd]">
-            &larr;Go back to Boards
+            &larr; Go back to Boards
           </Button>
-          <h2 className="text-center text-4xl font-semibold">Your Account</h2>
+          <h2 className="text-center text-cxl md:text-2xl lg:text-4xl font-semibold">Your Account</h2>
           <div className="mt-24 flex flex-col text-2xl items-center gap-8">
             <ProfileIcon type="xl" />
             <p className="mt-16">{user.displayName}</p>
@@ -57,13 +57,21 @@ export default function Account() {
         <form onSubmit={onSubmitAccountDeletion}>
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-col gap-2 items-center">
-              <h3 className="text-red-600 text-2xl font-semibold">Are you sure?</h3>
-              <p className="text-red-600 text-xl">This action cannot be undone.</p>
+              <h3 className="text-red-600 text-lg lg:text-2xl font-semibold">Are you sure?</h3>
+              <p className="text-red-600 text-center text-base lg:text-xl">This action cannot be undone.</p>
             </div>
             <Input type="password" name="password" id="" placeholder="Enter your password" />
-            <Button disabled={isPending} styling="text-lg text-[#fff] bg-red-600 hover:bg-red-800 disabled:bg-red-400 px-2 py-1 rounded-md">
-              {isPending ? "Deleting user..." : "Confirm Deletion"}
-            </Button>
+            <div className="flex flex-col-reverse lg:flex-row gap-4">
+              <Button onClick={() => ref.current.close()} type="button" styling="text-violet-700 hover:text-violet-800">
+                Cancel
+              </Button>
+              <Button
+                disabled={isPending}
+                styling=" text-base lg:text-lg text-[#fff] bg-red-600 hover:bg-red-700 disabled:bg-red-400 px-2 py-1 rounded-md"
+              >
+                {isPending ? "Deleting user..." : "Confirm Deletion"}
+              </Button>
+            </div>
             {isError && <Error errors={["Please check your password."]} />}
           </div>
         </form>
