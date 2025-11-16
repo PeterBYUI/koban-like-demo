@@ -1,5 +1,5 @@
 import ProfileIcon from "./ProfileIcon";
-import SignOutButton from "./SignOutButton";
+import Button from "./Button";
 
 export default function Sidebar({ open, mutate, isPending }) {
   let styling =
@@ -13,12 +13,9 @@ export default function Sidebar({ open, mutate, isPending }) {
   return (
     <div className={styling}>
       <ProfileIcon type="lg" />
-      <button
-        onClick={mutate}
-        className="cursor-pointer text-center text-xl font-semibold text-[#fff] hover:text-[#ddd] transition-all duration-200"
-      >
+      <Button onClick={mutate} styling="text-center text-xl font-semibold text-[#fff] hover:text-[#ddd]">
         Sign out
-      </button>
+      </Button>
       {/* <SignOutButton mutate={mutate} isPending={isPending} /> */}
     </div>
   );

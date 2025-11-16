@@ -8,6 +8,7 @@ import ProfileIcon from "../components/ProfileIcon";
 import Dialog from "../components/Dialog";
 import Input from "../components/Input";
 import Error from "../components/Error";
+import Button from "../components/Button";
 
 export default function Account() {
   const { user } = useContext(AuthContext);
@@ -43,12 +44,9 @@ export default function Account() {
           <div className="mt-24 flex flex-col text-2xl items-center gap-8">
             <ProfileIcon type="xl" />
             <p className="mt-16">{user.displayName}</p>
-            <button
-              onClick={() => ref.current.open()}
-              className="text-lg text-red-600 hover:text-red-800 cursor-pointer transition-all duration-200"
-            >
+            <Button onClick={() => ref.current.open()} styling="text-lg text-red-600 hover:text-red-800">
               Delete Account
-            </button>
+            </Button>
           </div>
         </div>
       </section>
@@ -60,13 +58,10 @@ export default function Account() {
               <p className="text-red-600 text-xl">This action cannot be undone.</p>
             </div>
             <Input type="password" name="password" id="" placeholder="Enter your password" />
-            <button
-              disabled={isPending}
-              className="text-lg text-[#fff] bg-red-600 hover:bg-red-800 disabled:bg-red-400 px-2 py-1 rounded-md cursor-pointer transition-all duration-200"
-            >
+            <Button disabled={isPending} styling="text-lg text-[#fff] bg-red-600 hover:bg-red-800 disabled:bg-red-400 px-2 py-1 rounded-md">
               {isPending ? "Deleting user..." : "Confirm Deletion"}
-            </button>
-            {isError && <Error errors={[error.code]} />}
+            </Button>
+            {isError && <Error errors={["Please check your password."]} />}
           </div>
         </form>
       </Dialog>
