@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { AuthContext } from "../store/AuthContext";
 import { useNavigate } from "react-router";
 
-export default function ProfileIcon({ type }) {
+export default function ProfileIcon({ type, closeSideBar }) {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -21,7 +21,13 @@ export default function ProfileIcon({ type }) {
   }
 
   return (
-    <button onClick={() => navigate("/account")} className={styling}>
+    <button
+      onClick={() => {
+        closeSideBar();
+        navigate("/account");
+      }}
+      className={styling}
+    >
       {user.displayName ? displayNameFormat(user.displayName) : "..."}
     </button>
   );

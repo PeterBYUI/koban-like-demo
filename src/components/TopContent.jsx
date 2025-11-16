@@ -20,7 +20,7 @@ export default function TopContent() {
   return (
     <header className="relative">
       <Header setSideBarIsOpen={setSidebarIsOpen} mutate={mutate} isPending={isPending} />
-      <Sidebar open={sidebarIsOpen} mutate={mutate} />
+      <Sidebar open={sidebarIsOpen} mutate={mutate} closeSideBar={() => setSidebarIsOpen(false)} />
     </header>
   );
 }
