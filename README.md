@@ -31,4 +31,4 @@ Koban-Like-Demo is a Kanban-style board application where users can create board
 
 ## Deployment
 
-This project is deployed on Vercel: koban-like-demo.vercel.app
+This project is deployed on Vercel: https://koban-like-demo.vercel.app
