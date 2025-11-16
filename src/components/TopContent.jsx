@@ -17,10 +17,14 @@ export default function TopContent() {
 
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
 
+  function handleCloseSidebar() {
+    setSidebarIsOpen(false);
+  }
+
   return (
     <header className="relative">
-      <Header setSideBarIsOpen={setSidebarIsOpen} mutate={mutate} isPending={isPending} />
-      <Sidebar open={sidebarIsOpen} mutate={mutate} closeSideBar={() => setSidebarIsOpen(false)} />
+      <Header setSideBarIsOpen={setSidebarIsOpen} mutate={mutate} isPending={isPending} closeSidebar={handleCloseSidebar} />
+      <Sidebar open={sidebarIsOpen} mutate={mutate} closeSidebar={handleCloseSidebar} />
     </header>
   );
 }

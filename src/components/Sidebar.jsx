@@ -1,7 +1,7 @@
 import ProfileIcon from "./ProfileIcon";
 import Button from "./Button";
 
-export default function Sidebar({ open, mutate, closeSideBar }) {
+export default function Sidebar({ open, mutate, closeSidebar }) {
   let styling =
     "absolute flex pt-16 items-center flex-col gap-16 right-0 w-1/1 h-[calc(100vh-64px)] rounded-bl-md ml-auto bg-[linear-gradient(to_bottom_right,rgba(20,36,82,.9),rgba(20,36,82,.5))] transition-all duration-350 ease-in-out ";
   if (open) {
@@ -12,7 +12,7 @@ export default function Sidebar({ open, mutate, closeSideBar }) {
 
   return (
     <div className={styling}>
-      <ProfileIcon type="lg" closeSideBar={closeSideBar} />
+      <ProfileIcon type="lg" closeSidebar={closeSidebar} />
       <Button onClick={mutate} styling="text-center text-xl font-semibold text-[#fff] hover:text-[#ddd]">
         Sign out
       </Button>

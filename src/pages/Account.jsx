@@ -40,6 +40,9 @@ export default function Account() {
     <>
       <section className="p-8">
         <div className="min-h-[calc(90vh-32px)] w-1/1 lg:w-2/3 mx-auto p-8 bg-[rgba(250,250,250,.1)] text-[#fff] rounded-md">
+          <Button onClick={() => navigate("/boards")} styling="mb-4 text-[#fff] hover:text-[#ddd]">
+            &larr;Go back to Boards
+          </Button>
           <h2 className="text-center text-4xl font-semibold">Your Account</h2>
           <div className="mt-24 flex flex-col text-2xl items-center gap-8">
             <ProfileIcon type="xl" />

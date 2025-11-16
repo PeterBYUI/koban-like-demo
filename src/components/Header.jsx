@@ -9,7 +9,7 @@ import ProfileIcon from "./ProfileIcon";
 import Modal from "./Modal";
 import Alert from "./Alert";
 
-export default function Header({ setSideBarIsOpen, mutate, isPending }) {
+export default function Header({ setSideBarIsOpen, mutate, isPending, closeSidebar }) {
   const { user } = useContext(AuthContext);
   const { selectedBoard, handleBoardSelection } = useContext(BoardsContext);
 
@@ -129,7 +129,7 @@ export default function Header({ setSideBarIsOpen, mutate, isPending }) {
             </button>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <div className="z-[100]">{<ProfileIcon type="md" />}</div>
+            <div className="z-[100]">{<ProfileIcon type="md" closeSidebar={closeSidebar} />}</div>
 
             <button
               onClick={() => {
