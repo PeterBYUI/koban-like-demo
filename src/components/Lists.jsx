@@ -10,6 +10,7 @@ import Modal from "./Modal";
 import EditButton from "./EditButton";
 import EditInput from "./EditInput";
 import DeleteButton from "./DeleteButton";
+import Button from "./Button";
 
 export default function Lists({ title, boardId, lists }) {
   const ref = useRef();
@@ -128,9 +129,9 @@ export default function Lists({ title, boardId, lists }) {
         <div className="flex items-center gap-4 mb-8">
           <div className="text-xl">
             {!isEditing ? (
-              <button
+              <Button
                 onClick={() => ref.current.open()}
-                className="flex gap-2 items-center text-[#fff] font-semibold hover:text-[#ddd] cursor-pointer transition-all duration-200"
+                styling="flex gap-2 items-center text-sm lg:text-2xl md:text-xl text-[#fff] font-semibold hover:text-[#ddd]"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -144,7 +145,7 @@ export default function Lists({ title, boardId, lists }) {
                 </svg>
 
                 <p>Add a new list to '{title}'</p>
-              </button>
+              </Button>
             ) : (
               <EditInput newTitle={newTitle} onChange={handleOnChange} />
             )}
