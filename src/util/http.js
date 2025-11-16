@@ -1,4 +1,13 @@
-import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendPasswordResetEmail,
+  deleteUser,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+} from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import {
   collection,
@@ -91,26 +100,28 @@ export const updateBoard = async ({ boardId, updates }) => {
   await updateDoc(boardRef, updates);
 };
 
-export const deleteBoard = async ({ boardId }) => {
-  const batch = writeBatch(db);
-
-  const listQueryRef = query(listsRef, where("boardId", "==", boardId));
+export const deleteBatch = async (batch, id) => {
+  const listQueryRef = query(listsRef, where("boardId", "==", id));
   const listsSnapshot = await getDocs(listQueryRef);
 
   listsSnapshot.docs.forEach((listDoc) => {
     batch.delete(listDoc.ref);
   });
 
-  const tasksQueryRef = query(tasksRef, where("boardId", "==", boardId));
+  const tasksQueryRef = query(tasksRef, where("boardId", "==", id));
   const tasksSnapshot = await getDocs(tasksQueryRef);
 
   tasksSnapshot.docs.forEach((taskDoc) => {
     batch.delete(taskDoc.ref);
   });
 
-  const boardDocRef = doc(db, "boards", boardId);
+  const boardDocRef = doc(db, "boards", id);
   batch.delete(boardDocRef);
+};
 
+export const deleteBoard = async ({ id }) => {
+  const batch = writeBatch(db);
+  await deleteBatch(batch, id);
   await batch.commit();
 };
 
@@ -143,17 +154,17 @@ export const updateList = async ({ listId, updates }) => {
   await updateDoc(targetListRef, updates);
 };
 
-export const deleteList = async ({ listId }) => {
+export const deleteList = async ({ target, id }) => {
   const batch = writeBatch(db);
 
-  const tasksQueryRef = query(tasksRef, where("listId", "==", listId));
+  const tasksQueryRef = query(tasksRef, where(target, "==", id));
   const tasksSnapshot = await getDocs(tasksQueryRef);
 
   tasksSnapshot.docs.forEach((taskDoc) => {
     batch.delete(taskDoc.ref);
   });
 
-  const listDocRef = doc(db, "lists", listId);
+  const listDocRef = doc(db, "lists", id);
 
   batch.delete(listDocRef);
 
@@ -201,4 +212,28 @@ export const updateTask = async ({ taskId, updates }) => {
 export const deleteTask = async ({ taskId }) => {
   const targetTaskRef = doc(db, "tasks", taskId);
   await deleteDoc(targetTaskRef);
+};
+
+//Account deletion
+
+export const deleteAccount = async ({ id, email, password }) => {
+  const user = auth.currentUser;
+
+  const boardQueryRef = query(boardsRef, where("userId", "==", id));
+  const boardsSnapshot = await getDocs(boardQueryRef);
+  const batch = writeBatch(db);
+
+  for (const boardDoc of boardsSnapshot.docs) {
+    await deleteBatch(batch, boardDoc.id);
+  }
+  await batch.commit();
+
+  const userQueryRef = query(usersRef, where("id", "==", id));
+  const userSnapshot = await getDocs(userQueryRef);
+
+  if (userSnapshot) await deleteDoc(userSnapshot.docs[0].ref);
+
+  const credential = EmailAuthProvider.credential(email, password);
+  await reauthenticateWithCredential(user, credential);
+  await deleteUser(user);
 };

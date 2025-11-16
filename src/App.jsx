@@ -8,6 +8,7 @@ import RootPage from "./pages/Root";
 import LoginPage from "./pages/Login";
 import Boards from "./pages/Boards";
 import SignupPage from "./pages/Signup";
+import Account from "./pages/Account";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -33,6 +34,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Boards />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/account",
+        element: (
+          <ProtectedRoute>
+            <Account />
           </ProtectedRoute>
         ),
       },

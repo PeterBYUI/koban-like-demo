@@ -159,7 +159,7 @@ export default function Lists({ title, boardId, lists }) {
             }}
             type="board"
           />
-          <DeleteButton deletion={() => deletion({ boardId })} type="board" />
+          <DeleteButton deletion={() => deletion({ id: boardId })} type="board" />
         </div>
         <DndContext onDragEnd={handleOnDragEnd}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

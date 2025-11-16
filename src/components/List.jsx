@@ -95,7 +95,7 @@ export default function List({ list }) {
                 setIsEditing((previousValue) => !previousValue);
               }}
             />
-            <DeleteButton type="list" deletion={() => deletion({ listId: list.id })} />
+            <DeleteButton type="list" deletion={() => deletion({ target: "listId", id: list.id })} />
           </div>
         </header>
         <div className="mt-8">
