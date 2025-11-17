@@ -27,7 +27,7 @@ export default function Task({ task, listId }) {
    ***** QUERIES  *****
    ********************/
 
-  //task updating query – optimistic uptdating
+  //task updating query – optimistic updating
   const { mutate } = useMutation({
     mutationFn: updateTask,
     onMutate: async (data) => {

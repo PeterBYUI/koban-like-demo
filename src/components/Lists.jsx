@@ -80,8 +80,8 @@ export default function Lists({ title, boardId, lists }) {
 
         const task = data.find((task) => task.id === taskId);
         if (task) {
-          if (task.listId === listId) return { previousTasks }; //cancels the operation if the list was dragged in the same
-          //list it alread belongs to
+          if (task.listId === listId) return { previousTasks }; //cancels the operation if the list was dragged into the same
+          //list it already belongs to
           movedTask = { ...task, listId };
           oldListKey = key;
           break;
