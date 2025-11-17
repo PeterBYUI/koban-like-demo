@@ -15,7 +15,6 @@ import Alert from "../components/Alert";
 
 export default function Boards() {
   const { user } = useContext(AuthContext);
-  // console.log(`userId: ${user?.id || "no user id"}`);
 
   const { selectedBoard } = useContext(BoardsContext);
 

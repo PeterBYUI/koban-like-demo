@@ -22,9 +22,6 @@ export default function Account() {
     onSuccess: () => {
       navigate("/login");
     },
-    onError: (err) => {
-      console.log(err);
-    },
   });
 
   const ref = useRef();

@@ -104,7 +104,6 @@ export default function Lists({ title, boardId, lists }) {
       return { previousTasks };
     },
     onError: (error, data, context) => {
-      console.log(error);
       queryClient.setQueriesData(["tasks", context.previousTasks]);
     },
     onSettled: () => {

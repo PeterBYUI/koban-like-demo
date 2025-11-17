@@ -84,8 +84,6 @@ export const addBoard = async ({ title, userId }) => {
 
 export const getBoards = async ({ userId }) => {
   if (!userId) return [];
-  // console.log("Fetching boards...");
-  // console.log(`UserId: ${userId}`);
   const queryRef = query(boardsRef, where("userId", "==", userId), orderBy("createdAt", "asc"));
   const snapshot = await getDocs(queryRef);
   const boards = snapshot.docs.map((doc) => ({

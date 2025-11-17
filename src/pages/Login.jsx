@@ -30,9 +30,6 @@ export default function LoginPage() {
     onSuccess: () => {
       ref.current.open();
     },
-    onError: (err) => {
-      console.log(err);
-    },
   });
 
   const {
